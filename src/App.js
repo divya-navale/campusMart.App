@@ -1,14 +1,16 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Logo from './components/common/Logo';
-import Footer from './components/common/Footer'; // Import Footer
+import Footer from './components/common/Footer';
 import Login from './pages/common/Login';
 import Signup from './pages/common/Signup';
 import ForgotPassword from './pages/common/ForgotPassword';
 import BuyerSellerChoice from './pages/common/BuyerSellerChoice';
 import BuyerDashboard from './pages/buyer/BuyerDashboard';
 import SellerDashboard from './pages/seller/SellerDashboard';
+import BuyerHeader from './components/buyer/BuyerHeader'; // Import BuyerHeader
 import NavbarComponent from './components/common/NavbarComponent';
 import './App.css';
 

@@ -70,7 +70,7 @@ import BuyerSellerChoice from './pages/common/BuyerSellerChoice';
 import BuyerDashboard from './pages/buyer/BuyerDashboard';
 import SellerDashboard from './pages/seller/SellerDashboard';
 import BuyerHeader from './components/buyer/BuyerHeader'; // Import BuyerHeader
-import NavbarComponent from './components/common/NavbarComponent';
+import SellerHeader from './components/seller/SellerHeader'; // Import SellerHeader
 import './App.css';
 
 function App() {
@@ -86,12 +86,15 @@ function App() {
 
     // Show BuyerHeader only on the buyer dashboard
     const showBuyerHeader = location.pathname === '/buyer-dashboard';
+    // Show SellerHeader only on the seller dashboard
+    const showSellerHeader = location.pathname === '/seller-dashboard';
 
     return (
       <>
         {showNavbar && <NavbarComponent />}
         {showHeader && <Logo />}
         {showBuyerHeader && <BuyerHeader />} {/* Show BuyerHeader */}
+        {showSellerHeader && <SellerHeader />} {/* Show SellerHeader */}
         {children}
       </>
     );

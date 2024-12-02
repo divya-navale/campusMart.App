@@ -1,22 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchProductById } from './../../services/api';
+import { fetchProductById, getWishlist, addToWishlist, removeFromWishlist } from './../../services/api';
 import { Container, Row, Col, Button, Modal } from 'react-bootstrap';
 import { FaHeart } from 'react-icons/fa';
+import { ToastContainer, toast } from 'react-toastify'; // Import Toastify
+import 'react-toastify/dist/ReactToastify.css'; // Import Toastify styles
 
 const ProductDetail = () => {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showModal, setShowModal] = useState(false);
   const [wishlist, setWishlist] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const userId = '6744d64bb94292764d48fe7f'; // Replace with actual user ID
 
   useEffect(() => {
     const getProductDetails = async () => {
       try {
-        const data = await fetchProductById(productId);
-        setProduct(data);
+        const productData = await fetchProductById(productId);
+        setProduct(productData);
+
+        // Fetch wishlist and check if this product is in the wishlist
+        const wishlistData = await getWishlist(userId);
+        const userWishlist = wishlistData.wishlist.products.map((product) => product._id);
+        setWishlist(userWishlist);
       } catch (err) {
         setError('Failed to fetch product details.');
       } finally {
@@ -27,16 +35,33 @@ const ProductDetail = () => {
     getProductDetails();
   }, [productId]);
 
-  const handleShowModal = () => setShowModal(true);
-  const handleCloseModal = () => setShowModal(false);
-
-  const toggleWishlist = (productId) => {
+  // Toggle wishlist items (add or remove)
+  const toggleWishlist = async (productId) => {
     if (wishlist.includes(productId)) {
-      setWishlist(wishlist.filter((id) => id !== productId));
+      // Remove from wishlist
+      try {
+        await removeFromWishlist(userId, productId); // API call to remove
+        setWishlist(wishlist.filter((id) => id !== productId)); // Update local state
+        toast.info('Product removed from wishlist!', { position: "top-right", autoClose: 3000 });
+      } catch (error) {
+        console.error('Failed to remove product from wishlist:', error);
+        toast.error('Failed to remove from wishlist. Try again!', { position: "top-right" });
+      }
     } else {
-      setWishlist([...wishlist, productId]);
+      // Add to wishlist
+      try {
+        await addToWishlist(userId, productId); // API call to add
+        setWishlist([...wishlist, productId]); // Update local state
+        toast.success('Product added to wishlist!', { position: "top-right", autoClose: 3000 });
+      } catch (error) {
+        console.error('Failed to add product to wishlist:', error);
+        toast.error('Failed to add to wishlist. Try again!', { position: "top-right" });
+      }
     }
   };
+
+  const handleShowModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
 
   if (loading) {
     return <h2 className="text-center mt-5">Loading...</h2>;
@@ -52,6 +77,8 @@ const ProductDetail = () => {
 
   return (
     <>
+      {/* ToastContainer for notifications */}
+      <ToastContainer />
       <Container className="mt-5" style={{ backgroundColor: '#f8f9fa', borderRadius: '10px', padding: '20px' }}>
         <Row>
           <Col md={6}>
@@ -82,16 +109,16 @@ const ProductDetail = () => {
               <div className="d-flex align-items-center">
                 <FaHeart
                   size={22}
-                  color={wishlist.includes(product.id) ? '#e63946' : '#adb5bd'} // Subtle gray or red
+                  color={wishlist.includes(product._id) ? '#e63946' : '#adb5bd'} // Red if in wishlist, gray otherwise
                   style={{ cursor: 'pointer', marginRight: '5px' }}
-                  onClick={() => toggleWishlist(product.id)} // Toggle wishlist on click
+                  onClick={() => toggleWishlist(product._id)} // Toggle wishlist
                   title={
-                    wishlist.includes(product.id)
+                    wishlist.includes(product._id)
                       ? 'Remove from Wishlist'
                       : 'Add to Wishlist'
                   }
                 />
-                <span style={{ fontSize: '0.9rem', color: '#6c757d' }}>Add to Wishlist</span>
+                <span style={{ fontSize: '0.9rem', color: '#6c757d' }}>Wishlist</span>
               </div>
 
               {/* Contact Seller Button */}
@@ -99,7 +126,7 @@ const ProductDetail = () => {
                 variant="outline-success"
                 style={{
                   color: '#f8f9fa',
-                  backgroundColor: '#6c757d', // Subtle gray matching header
+                  backgroundColor: '#6c757d',
                   borderColor: '#6c757d',
                 }}
                 onClick={handleShowModal}
@@ -138,9 +165,9 @@ const ProductDetail = () => {
             <Button
               variant="primary"
               style={{
-                backgroundColor: '#6c757d', // Subtle gray matching header
+                backgroundColor: '#6c757d',
                 borderColor: '#6c757d',
-                color: '#f8f9fa', // Light text
+                color: '#f8f9fa',
               }}
               onClick={handleCloseModal}
             >

@@ -1,0 +1,75 @@
+.dashboardcontainer {
+  padding: 1.5rem 0;
+  background-color: #f8f9fa;
+}
+.dashboardcontainer h2 {
+  color: #343a40;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.card {
+  height: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+}
+.card img {
+  height: 250px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  cursor: pointer;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.card .card-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #495057;
+}
+.card .card-text {
+  color: #6c757d;
+  font-size: 1rem;
+}
+.card .wishlist-icon {
+  cursor: pointer;
+  margin-right: 5px;
+}
+.card .wishlist-label {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+.card .contact-btn {
+  color: #f8f9fa;
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+.card .contact-btn:hover {
+  background-color: #5c646d;
+  border-color: #5c646d;
+}
+
+.modal-body table {
+  margin: 0 auto;
+  font-size: 1rem;
+  color: #495057;
+}
+.modal-body table td {
+  padding: 5px 10px;
+}
+.modal-body table td.label {
+  font-weight: bold;
+  text-align: right;
+}
+.modal-body table td.value {
+  text-align: left;
+}
+.modal-body .notification-btn {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: #f8f9fa;
+}
+.modal-body .notification-btn:hover {
+  background-color: #5c646d;
+  border-color: #5c646d;
+}/*# sourceMappingURL=buyerDashboard.css.map */

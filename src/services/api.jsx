@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { API_URL } from '../config';
 
 export const fetchProducts = async () => {
   try {
-    const response = await axios.get('/api/products');
+    const response = await axios.get(`${API_URL}/api/products`);
     console.log(response);
     return response.data;
   } catch (error) {
@@ -13,7 +14,7 @@ export const fetchProducts = async () => {
 
 export const fetchProductsBySeller = async (sellerId) => {
   try {
-    const response = await axios.get(`/api/products/seller/${sellerId}`);
+    const response = await axios.get(`${API_URL}/api/products/seller/${sellerId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching products by seller:', error);
@@ -23,7 +24,7 @@ export const fetchProductsBySeller = async (sellerId) => {
 
 export const fetchProductById = async (productId) => {
   try {
-    const response = await axios.get(`/api/products/${productId}`);
+    const response = await axios.get(`${API_URL}/api/products/${productId}`);
     console.log(response.data);
     return response.data;
   } catch (error) {
@@ -34,7 +35,7 @@ export const fetchProductById = async (productId) => {
 
 export const addToWishlist = async (userId, productId) => {
   try {
-    const response = await axios.post(`/api/wishlist/add`, { userId, productId });
+    const response = await axios.post(`${API_URL}/api/wishlist/add`, { userId, productId });
     return response.data;
   } catch (error) {
     console.error('Error adding to wishlist:', error);
@@ -47,7 +48,7 @@ export const addToWishlist = async (userId, productId) => {
 // api.js
 export const removeFromWishlist = async (userId, productId) => {
   try {
-    const response = await axios.delete(`/api/wishlist/remove`, {
+    const response = await axios.delete(`${API_URL}/api/wishlist/remove`, {
       data: { userId, productId },
     });
     return response.data;
@@ -60,7 +61,7 @@ export const removeFromWishlist = async (userId, productId) => {
 // Fetch user's wishlist
 export const getWishlist = async (userId) => {
   try {
-    const response = await axios.get(`/api/wishlist/${userId}`);
+    const response = await axios.get(`${API_URL}/api/wishlist/${userId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching wishlist:', error);
@@ -70,7 +71,7 @@ export const getWishlist = async (userId) => {
 
 export const verifyOtp = async (email, otp) => {
   try {
-    const response = await axios.post(`/api/otp/verify-otp`,
+    const response = await axios.post(`${API_URL}/api/otp/verify-otp`,
       {
         email,
         otp
@@ -90,7 +91,7 @@ export const verifyOtp = async (email, otp) => {
 
 export const sendOtp = async (email) => {
   try {
-    const response = await axios.post(`/api/otp/send-otp`,
+    const response = await axios.post(`${API_URL}/api/otp/send-otp`,
       { email },
       {
         headers: {

@@ -15,53 +15,68 @@ import NavbarComponent from './components/common/NavbarComponent';
 import BuyerHeader from './components/buyer/BuyerHeader';
 import SellerHeader from './components/seller/SellerHeader';
 import ProductDetail from './pages/buyer/ProductDetails';
-import './App.css';
+import RequestProduct from './pages/buyer/RequestProduct';
 import Verification from './pages/common/Verification';
+import './App.css';
 
 const Layout = ({ children }) => {
   const location = useLocation();
 
-  // Determine visibility of various components
-  const showNavbar = ['/buyer-dashboard', '/seller-dashboard', '/product', '/buyer-profile', '/seller-profile'].some(
-    (route) => location.pathname.startsWith(route)
-  );
+  // Define routes where the buyer header should appear
+  const isBuyerRoute = location.pathname.startsWith('/buyer-dashboard') ||
+    location.pathname === '/buyer-profile';
 
-  const dashboardAndProfileRoutes = [
-    '/buyer-dashboard',
-    '/seller-dashboard',
-    '/buyer-profile',
-    '/seller-profile',
-  ];
+  // Define routes where the seller header should appear
+  const isSellerRoute = location.pathname.startsWith('/seller-dashboard') ||
+    location.pathname === '/seller-profile';
 
-  // Display the logo unless the current page is a dashboard or profile page
-  const showLogo = (!dashboardAndProfileRoutes.some((route) => location.pathname.startsWith(route)) ||
-    location.pathname === '/choose-role') && !location.pathname.startsWith('/product');
-
+  // Define routes with navbar but no header
+  const isNavbarOnlyRoute = location.pathname === '/request-product';
 
   return (
     <>
-      {showNavbar && <NavbarComponent />}
-      {showLogo && (
-        <Logo
-          style={{
-            cursor: ['/', '/login', '/signup', '/choose-role'].includes(location.pathname) ? 'default' : 'pointer',
-          }}
-        />
-      )}
-      {location.pathname.startsWith('/buyer-dashboard') && (
+      {/* Navbar for specific routes */}
+      {(isBuyerRoute || isSellerRoute || isNavbarOnlyRoute) && <NavbarComponent />}
+
+      {/* Buyer Header Layout (excluding profile and request product) */}
+      {isBuyerRoute && location.pathname !== '/buyer-profile' && (
         <div className="d-flex">
           <BuyerHeader />
           <div className="flex-grow-1">{children}</div>
         </div>
       )}
-      {location.pathname.startsWith('/seller-dashboard') && (
+
+      {/* Seller Header Layout */}
+      {isSellerRoute && (
         <div className="d-flex">
           <SellerHeader />
           <div className="flex-grow-1">{children}</div>
         </div>
       )}
-      {!location.pathname.startsWith('/buyer-dashboard') &&
-        !location.pathname.startsWith('/seller-dashboard') && <div className="flex-grow-1">{children}</div>}
+
+      {/* Default Layout without Header */}
+      {!isBuyerRoute && !isSellerRoute && !isNavbarOnlyRoute && (
+        <>
+          <Logo
+            style={{
+              cursor: ['/', '/login', '/signup', '/choose-role'].includes(location.pathname)
+                ? 'default'
+                : 'pointer',
+            }}
+          />
+          <div className="flex-grow-1">{children}</div>
+        </>
+      )}
+
+      {/* Layout for routes with navbar but no header */}
+      {isNavbarOnlyRoute && (
+        <div className="flex-grow-1">{children}</div>
+      )}
+
+      {/* Layout for buyer profile without header */}
+      {location.pathname === '/buyer-profile' && (
+        <div className="flex-grow-1">{children}</div>
+      )}
     </>
   );
 };
@@ -72,22 +87,16 @@ function App() {
       <div className="app d-flex flex-column min-vh-100">
         <Layout>
           <Routes>
-            {/* Common Routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/choose-role" element={<BuyerSellerChoice />} />
             <Route path="/" element={<Login />} />
             <Route path="/verify" element={<Verification />} />
-
-            {/* Product Detail Route */}
             <Route path="/product/:productId" element={<ProductDetail />} />
-
-            {/* Buyer Routes */}
             <Route path="/buyer-dashboard" element={<BuyerDashboard />} />
             <Route path="/buyer-profile" element={<BuyerProfile />} />
-
-            {/* Seller Routes */}
+            <Route path="/request-product" element={<RequestProduct />} />
             <Route path="/seller-dashboard" element={<SellerDashboard />} />
             <Route path="/seller-profile" element={<SellerProfile />} />
           </Routes>

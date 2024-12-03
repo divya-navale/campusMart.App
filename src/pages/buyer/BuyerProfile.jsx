@@ -1,37 +1,71 @@
-import React from 'react';
-import { Container, Card, Button, ListGroup } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Container, Form, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { RESIDENCE_OPTIONS } from '../../constants/options';
 
 const BuyerProfile = () => {
-  const buyerInfo = {
-    name: "John Doe",
-    email: "john@example.com",
-    address: "123 Main St, Anytown, USA",
-    purchaseHistory: [
-      { id: 1, name: "Product A", price: 150 },
-      { id: 2, name: "Product B", price: 50 },
-    ],
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    fullName: 'John Doe',
+    email: 'john@example.com',
+    studentLocation: 'On-Campus',
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('Updated Info:', formData);
+    navigate('/buyer-dashboard'); // Redirect to dashboard after update
   };
 
   return (
     <Container className="mt-5">
-      <h2 className="text-center mb-4">Buyer Profile</h2>
-      <Card className="mb-4">
-        <Card.Body>
-          <Card.Title>{buyerInfo.name}</Card.Title>
-          <Card.Text>Email: {buyerInfo.email}</Card.Text>
-          <Card.Text>Address: {buyerInfo.address}</Card.Text>
-          <Button variant="primary">Edit Profile</Button>
-        </Card.Body>
-      </Card>
+      <h2 className="text-center mb-4">Edit Profile</h2>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group className="mb-3">
+          <Form.Label>Full Name</Form.Label>
+          <Form.Control
+            type="text"
+            name="fullName"
+            value={formData.fullName}
+            onChange={handleInputChange}
+          />
+        </Form.Group>
 
-      <h3>Purchase History</h3>
-      <ListGroup>
-        {buyerInfo.purchaseHistory.map((item) => (
-          <ListGroup.Item key={item.id}>
-            {item.name} - ${item.price}
-          </ListGroup.Item>
-        ))}
-      </ListGroup>
+        <Form.Group className="mb-3">
+          <Form.Label>Email</Form.Label>
+          <Form.Control
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Label>Student Location</Form.Label>
+          <Form.Control
+            as="select"
+            name="studentLocation"
+            value={formData.studentLocation}
+            onChange={handleInputChange}
+          >
+            {RESIDENCE_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </Form.Control>
+        </Form.Group>
+
+        <Button type="submit" variant="primary">
+          Save Changes
+        </Button>
+      </Form>
     </Container>
   );
 };

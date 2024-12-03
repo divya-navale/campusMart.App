@@ -17,6 +17,9 @@ import SellerHeader from './components/seller/SellerHeader';
 import ProductDetail from './pages/buyer/ProductDetails';
 import RequestProduct from './pages/buyer/RequestProduct';
 import Verification from './pages/common/Verification';
+import Notifications from './pages/common/Notifications';
+import Wishlist from './pages/common/Wishlist';
+
 import './App.css';
 
 const Layout = ({ children }) => {
@@ -99,6 +102,9 @@ function App() {
             <Route path="/request-product" element={<RequestProduct />} />
             <Route path="/seller-dashboard" element={<SellerDashboard />} />
             <Route path="/seller-profile" element={<SellerProfile />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/profile" element={<BuyerProfile />} />
           </Routes>
         </Layout>
         <Footer />

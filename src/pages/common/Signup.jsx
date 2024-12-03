@@ -4,6 +4,8 @@ import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { RESIDENCE_OPTIONS } from '../../constants/options';
 import { sendOtp } from '../../services/api';
+import { API_URL } from '../../config';
+
 const Signup = () => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -23,7 +25,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post('/api/users', {
+      const response = await axios.post(`${API_URL}/api/users`, {
         name: fullName,
         email: email,
         password: password,

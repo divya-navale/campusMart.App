@@ -7,7 +7,7 @@ export const fetchProducts = async () => {
     return response.data;
   } catch (error) {
     console.error('Error fetching products:', error);
-    throw error; 
+    throw error;
   }
 };
 
@@ -68,3 +68,40 @@ export const getWishlist = async (userId) => {
   }
 };
 
+export const verifyOtp = async (email, otp) => {
+  try {
+    const response = await axios.post(`/api/otp/verify-otp`,
+      {
+        email,
+        otp
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error verifying OTP:', error);
+    throw error;
+  }
+};
+
+export const sendOtp = async (email) => {
+  try {
+    const response = await axios.post(`/api/otp/send-otp`,
+      { email },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    console.log("OTP sent successfully", response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error sending OTP:', error);
+    throw error;
+  }
+};

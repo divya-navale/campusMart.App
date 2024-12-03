@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { RESIDENCE_OPTIONS } from '../../constants/options';
-
-
+import { sendOtp } from '../../services/api';
 const Signup = () => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -31,9 +30,14 @@ const Signup = () => {
         location: studentlocation,
       });
 
-      if (response.status === 201) {
+      const otpResponse = await sendOtp(email);
+      if(otpResponse.status == 200){
+        console.log("OTP sent to email:" , email);
+      }
+
+      if (response.status == 201) {
         console.log('User created successfully:', response.data);
-        navigate('/login');
+        navigate('/verify', { state: { email: email } });
       } else {
         setError('Failed to create account');
       }

@@ -16,6 +16,7 @@ import BuyerHeader from './components/buyer/BuyerHeader';
 import SellerHeader from './components/seller/SellerHeader';
 import ProductDetail from './pages/buyer/ProductDetails';
 import './App.css';
+import Verification from './pages/common/Verification';
 
 const Layout = ({ children }) => {
   const location = useLocation();
@@ -77,6 +78,7 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/choose-role" element={<BuyerSellerChoice />} />
             <Route path="/" element={<Login />} />
+            <Route path="/verify" element={<Verification />} />
 
             {/* Product Detail Route */}
             <Route path="/product/:productId" element={<ProductDetail />} />

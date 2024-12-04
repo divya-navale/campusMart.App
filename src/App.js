@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import Logo from './components/common/Logo';
 import Footer from './components/common/Footer';
 import Login from './pages/common/Login';
@@ -24,6 +24,14 @@ import './App.css';
 
 const Layout = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if(!token){
+      navigate('/login');
+    }
+  });
 
   // Define routes where the buyer header should appear
   const isBuyerRoute = location.pathname.startsWith('/buyer-dashboard') ||
@@ -94,7 +102,12 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/choose-role" element={<BuyerSellerChoice />} />
-            <Route path="/" element={<Login />} />
+            <Route
+              path="/"
+              element={
+                localStorage.getItem('token') ? <BuyerSellerChoice /> : <Login />
+              }
+            />
             <Route path="/verify" element={<Verification />} />
             <Route path="/product/:productId" element={<ProductDetail />} />
             <Route path="/buyer-dashboard" element={<BuyerDashboard />} />

@@ -1,10 +1,43 @@
-import axios from 'axios';
-import { API_URL } from '../config';
+import api from './axios';
+
+export const signupUser = async (name, email, password, location) => {
+  try {
+    const response = await api.post(`/api/users`, { name, email, password, location });
+
+    if (response.status === 201) {
+      const otpResponse = await sendOtp(email);
+      if (otpResponse.status === 200) {
+        console.log("OTP sent to email:", email);
+      }
+
+      return response.data;
+    } else {
+      throw new Error('Failed to create account');
+    }
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Signup failed');
+  }
+};
+
+export const loginUser = async (email, password) => {
+  try {
+    const response = await api.post(`/api/users/verify`, { email, password });
+
+    if (response.data.verified) {
+      const token = response.data.token;
+      localStorage.setItem('token', token);
+      return response.data;
+    } else {
+      throw new Error('Invalid credentials');
+    }
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Login failed');
+  }
+};
 
 export const fetchProducts = async () => {
   try {
-    const response = await axios.get(`${API_URL}/api/products`);
-    console.log(response);
+    const response = await api.get(`/api/products`);
     return response.data;
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -14,7 +47,7 @@ export const fetchProducts = async () => {
 
 export const fetchProductsBySeller = async (sellerId) => {
   try {
-    const response = await axios.get(`${API_URL}/api/products/seller/${sellerId}`);
+    const response = await api.get(`/api/products/seller/${sellerId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching products by seller:', error);
@@ -24,8 +57,7 @@ export const fetchProductsBySeller = async (sellerId) => {
 
 export const fetchProductById = async (productId) => {
   try {
-    const response = await axios.get(`${API_URL}/api/products/${productId}`);
-    console.log(response.data);
+    const response = await api.get(`/api/products/${productId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching product by ID:', error);
@@ -35,7 +67,7 @@ export const fetchProductById = async (productId) => {
 
 export const addToWishlist = async (userId, productId) => {
   try {
-    const response = await axios.post(`${API_URL}/api/wishlist/add`, { userId, productId });
+    const response = await api.post(`/api/wishlist/add`, { userId, productId });
     return response.data;
   } catch (error) {
     console.error('Error adding to wishlist:', error);
@@ -43,12 +75,9 @@ export const addToWishlist = async (userId, productId) => {
   }
 };
 
-
-// Remove product from wishlist
-// api.js
 export const removeFromWishlist = async (userId, productId) => {
   try {
-    const response = await axios.delete(`${API_URL}/api/wishlist/remove`, {
+    const response = await api.delete(`/api/wishlist/remove`, {
       data: { userId, productId },
     });
     return response.data;
@@ -58,10 +87,9 @@ export const removeFromWishlist = async (userId, productId) => {
   }
 };
 
-//Fetch user's wishlist
 export const getWishlist = async (userId) => {
   try {
-    const response = await axios.get(`${API_URL}/api/wishlist/${userId}`);
+    const response = await api.get(`/api/wishlist/${userId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching wishlist:', error);
@@ -71,17 +99,7 @@ export const getWishlist = async (userId) => {
 
 export const verifyOtp = async (email, otp) => {
   try {
-    const response = await axios.post(`${API_URL}/api/otp/verify-otp`,
-      {
-        email,
-        otp
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    const response = await api.post(`/api/otp/verify-otp`, { email, otp });
     return response.data;
   } catch (error) {
     console.error('Error verifying OTP:', error);
@@ -91,14 +109,7 @@ export const verifyOtp = async (email, otp) => {
 
 export const sendOtp = async (email) => {
   try {
-    const response = await axios.post(`${API_URL}/api/otp/send-otp`,
-      { email },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    const response = await api.post(`/api/otp/send-otp`, { email });
     console.log("OTP sent successfully", response.data);
     return response.data;
   } catch (error) {
@@ -107,20 +118,9 @@ export const sendOtp = async (email) => {
   }
 };
 
-// export const getWishlistProducts = async (userId) => {
-//   try {
-//     const response = await axios.get(`/api/wishlist/${userId}`);
-//     console.log('Wishlist API Response:', response.data);
-//     return response.data.wishlist.products; // Ensure this is returning an array of products
-//   } catch (error) {
-//     console.error('Error fetching wishlist:', error);
-//     throw error;
-//   }
-// };
-
 export const getWishlistProducts = async (userId) => {
   try {
-    const response = await axios.get(`/api/wishlist/${userId}`);
+    const response = await api.get(`/api/wishlist/${userId}`);
     console.log('Wishlist API Response:', response.data);
     if (response.data && response.data.wishlist && Array.isArray(response.data.wishlist.products)) {
       return response.data.wishlist.products;
@@ -132,23 +132,20 @@ export const getWishlistProducts = async (userId) => {
   }
 };
 
-// Fetch products by seller ID
 export const getProductsBySeller = async (sellerId) => {
   try {
-    const response = await axios.get(`${API_URL}/api/products/seller/${sellerId}`);
-    return response.data;  // return the list of products
+    const response = await api.get(`/api/products/seller/${sellerId}`);
+    return response.data;
     
   } catch (error) {
     throw new Error('Failed to fetch products by seller: ' + error.message);
   }
 };
 
-// Add a new product (single image)
 export const addProduct = async (productData) => {
   try {
     const formData = new FormData();
     
-    // Append all the required fields to the FormData
     formData.append('name', productData.name);
     formData.append('category', productData.category);
     formData.append('price', productData.price);
@@ -160,19 +157,34 @@ export const addProduct = async (productData) => {
     formData.append('availableTill', productData.availableTill);
     formData.append('location', productData.location);
     formData.append('contact', productData.contact);
-    formData.append('condition', productData.condition);  // Append condition
-    formData.append('sellerId', productData.sellerId);  // Append sellerId
-    formData.append('image', productData.image);  // Append the image file (single image, not an array)
-
-    // Send the request to the backend API
-    const response = await axios.post(`${API_URL}/api/products`, formData, {
+    formData.append('condition', productData.condition);
+    formData.append('sellerId', productData.sellerId);
+    formData.append('image', productData.image);
+    const response = await api.post(`/api/products`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
 
-    return response.data.product;  // Return the newly added product
+    return response.data.product;
   } catch (error) {
     throw new Error('Failed to add product: ' + error.message);
+  }
+};
+
+
+export const logoutUser = async () => {
+  try {
+    const response = await api.post('/api/users/logout');
+    console.log('Logout successful:', response.data);
+    if (response.status === 200) {
+      localStorage.removeItem('userRole');
+      localStorage.removeItem('token');
+      return response.data;
+    }
+    return response.data;
+  } catch (error) {
+    console.error('Error logging out:', error);
+    throw error;
   }
 };

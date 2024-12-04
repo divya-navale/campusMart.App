@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
-import axios from 'axios';
 import { RESIDENCE_OPTIONS } from '../../constants/options';
-import { sendOtp } from '../../services/api';
-import { API_URL } from '../../config';
+import { signupUser } from '../../services/api';
 
 const Signup = () => {
   const [fullName, setFullName] = useState('');
@@ -25,34 +23,12 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post(`${API_URL}/api/users`, {
-        name: fullName,
-        email: email,
-        password: password,
-        location: studentlocation,
-      });
-
-      const otpResponse = await sendOtp(email);
-      if(otpResponse.status == 200){
-        console.log("OTP sent to email:" , email);
-      }
-
-      if (response.status == 201) {
-        console.log('User created successfully:', response.data);
-        navigate('/verify', { state: { email: email } });
-      } else {
-        setError('Failed to create account');
-      }
-    } catch (error) {
-      console.error('Request failed:', error);
-      if (error.response) {
-        console.log('Response error:', error.response.data);
-        console.log('Response status:', error.response.status);
-      } else if (error.request) {
-        console.log('No response received:', error.request);
-      } else {
-        console.log('Error:', error.message);
-      }
+      const response = await signupUser(fullName, email, password, studentlocation);
+      console.log('User created successfully:', response);
+      navigate('/verify', { state: { email: email } });
+    } catch (err) {
+      setError(err.message);
+      console.error(err);
     }
   };
 

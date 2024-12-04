@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
-import axios from 'axios';
-import { API_URL } from '../../config';
+import { loginUser } from './../../services/api';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -15,19 +14,11 @@ const Login = () => {
     setError('');
 
     try {
-      const response = await axios.post(`${API_URL}/api/users/verify`, {
-        email,
-        password,
-      });
-
-      if (response.data.verified) {
-        console.log('Login successful!');
-        navigate('/choose-role');
-      } else {
-        setError('Invalid email or password');
-      }
+      const response = await loginUser(email, password);
+      console.log('Login successful!', response);
+      navigate('/choose-role');
     } catch (err) {
-      setError(err.response.data.message);
+      setError(err.message); 
       console.error(err);
     }
   };

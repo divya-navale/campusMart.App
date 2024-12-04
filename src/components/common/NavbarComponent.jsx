@@ -6,14 +6,24 @@ import { RiUserHeartFill } from 'react-icons/ri';
 import { BiSolidSelectMultiple } from 'react-icons/bi';
 import './../../styles/style.css';
 import logo from './../../assets/logo.png';
+import { logoutUser } from './../../services/api';
 
 const NavbarComponent = () => {
   const navigate = useNavigate();
 
-  // Function to render a tooltip
   const renderTooltip = (text) => (
     <Tooltip>{text}</Tooltip>
   );
+
+  const handleLogout = async () => {
+    try {
+      const response = await logoutUser();
+      console.log(response.message);
+      navigate('/login');
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
 
   return (
     <Navbar bg="dark" variant="dark" expand="lg" className="py-3">
@@ -92,7 +102,7 @@ const NavbarComponent = () => {
             {/* Logout */}
             <OverlayTrigger placement="bottom" overlay={renderTooltip("Logout")}>
               <Nav.Link
-                onClick={() => navigate('/login')}
+                onClick={handleLogout}
                 className="d-flex flex-column align-items-center mx-2 nav-icon-container"
               >
                 <FaSignOutAlt className="nav-link-icon" />

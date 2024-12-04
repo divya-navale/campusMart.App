@@ -27,6 +27,9 @@ const Layout = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if(location.pathname != 'signup' && location.pathname != 'forgot-password'){
+      return;
+    }
     const token = localStorage.getItem('token');
     if(!token){
       navigate('/login');

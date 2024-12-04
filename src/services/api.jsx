@@ -131,3 +131,48 @@ export const getWishlistProducts = async (userId) => {
     throw error;
   }
 };
+
+// Fetch products by seller ID
+export const getProductsBySeller = async (sellerId) => {
+  try {
+    const response = await axios.get(`${API_URL}/api/products/seller/${sellerId}`);
+    return response.data;  // return the list of products
+    
+  } catch (error) {
+    throw new Error('Failed to fetch products by seller: ' + error.message);
+  }
+};
+
+// Add a new product (single image)
+export const addProduct = async (productData) => {
+  try {
+    const formData = new FormData();
+    
+    // Append all the required fields to the FormData
+    formData.append('name', productData.name);
+    formData.append('category', productData.category);
+    formData.append('price', productData.price);
+    formData.append('negotiable', productData.negotiable);
+    formData.append('ageYears', productData.ageYears);
+    formData.append('ageMonths', productData.ageMonths);
+    formData.append('ageDays', productData.ageDays);
+    formData.append('description', productData.description);
+    formData.append('availableTill', productData.availableTill);
+    formData.append('location', productData.location);
+    formData.append('contact', productData.contact);
+    formData.append('condition', productData.condition);  // Append condition
+    formData.append('sellerId', productData.sellerId);  // Append sellerId
+    formData.append('image', productData.image);  // Append the image file (single image, not an array)
+
+    // Send the request to the backend API
+    const response = await axios.post(`${API_URL}/api/products`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data.product;  // Return the newly added product
+  } catch (error) {
+    throw new Error('Failed to add product: ' + error.message);
+  }
+};

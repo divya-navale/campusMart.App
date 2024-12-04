@@ -23,7 +23,6 @@ const BuyerDashboard = () => {
       try {
         const productsData = await fetchProducts();
         setProducts(productsData);
-
         const wishlistData = await getWishlist(userId);
         const userWishlist = wishlistData.wishlist.products.map((product) => product._id); // Extract product IDs
         setWishlist(userWishlist); // Set wishlist state
@@ -121,15 +120,15 @@ const BuyerDashboard = () => {
               <tbody>
                 <tr>
                   <td className="label">Name:</td>
-                  <td className="value">{selectedProduct.contactInfo.name}</td>
+                  <td className="value">Divya Avuti</td>
                 </tr>
                 <tr>
                   <td className="label">Phone:</td>
-                  <td className="value">{selectedProduct.contactInfo.phone}</td>
+                  <td className="value">7093728808</td>
                 </tr>
                 <tr>
                   <td className="label">Email:</td>
-                  <td className="value">{selectedProduct.contactInfo.email}</td>
+                  <td className="value">why@gmail.com</td>
                 </tr>
               </tbody>
             </table>

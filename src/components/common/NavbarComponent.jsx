@@ -1,7 +1,7 @@
 import React from 'react';
-import { Navbar, Nav, Form, FormControl, Button, Container } from 'react-bootstrap';
+import { Navbar, Nav, Form, FormControl, Button, Container, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { FaHeart, FaBell, FaShoppingCart } from 'react-icons/fa';
+import { FaHeart, FaBell, FaBoxOpen, FaSignOutAlt } from 'react-icons/fa';
 import { RiUserHeartFill } from 'react-icons/ri';
 import { BiSolidSelectMultiple } from 'react-icons/bi';
 import './../../styles/style.css';
@@ -9,6 +9,11 @@ import logo from './../../assets/logo.png';
 
 const NavbarComponent = () => {
   const navigate = useNavigate();
+
+  // Function to render a tooltip
+  const renderTooltip = (text) => (
+    <Tooltip>{text}</Tooltip>
+  );
 
   return (
     <Navbar bg="dark" variant="dark" expand="lg" className="py-3">
@@ -34,26 +39,65 @@ const NavbarComponent = () => {
 
           {/* Icons */}
           <Nav className="align-items-center">
-            <Nav.Link onClick={() => navigate('/notifications')} className="d-flex flex-column align-items-center mx-2">
-              <FaBell className="nav-link-icon" />
-              <span className="nav-link-text">Notifications</span>
-            </Nav.Link>
-            <Nav.Link onClick={() => navigate('/wishlist')} className="d-flex flex-column align-items-center mx-2">
-              <FaHeart className="nav-link-icon" />
-              <span className="nav-link-text">Wishlist</span>
-            </Nav.Link>
-            <Nav.Link onClick={() => navigate('/profile')} className="d-flex flex-column align-items-center mx-2">
-              <RiUserHeartFill className="nav-link-icon" />
-              <span className="nav-link-text">Profile</span>
-            </Nav.Link>
-            <Nav.Link onClick={() => navigate('/request-product')} className="d-flex flex-column align-items-center mx-2">
-              <FaShoppingCart className="nav-link-icon" />
-              <span className="nav-link-text">Request Product</span>
-            </Nav.Link>
-            <Nav.Link onClick={() => navigate('/choose-role')} className="d-flex flex-column align-items-center mx-2">
-              <BiSolidSelectMultiple className="nav-link-icon" />
-              <span className="nav-link-text">Choose Role</span>
-            </Nav.Link>
+            {/* Profile */}
+            <OverlayTrigger placement="bottom" overlay={renderTooltip("Profile")}>
+              <Nav.Link
+                onClick={() => navigate('/profile')}
+                className="d-flex flex-column align-items-center mx-2 nav-icon-container"
+              >
+                <RiUserHeartFill className="nav-link-icon" />
+              </Nav.Link>
+            </OverlayTrigger>
+
+            {/* Notifications */}
+            <OverlayTrigger placement="bottom" overlay={renderTooltip("Notifications")}>
+              <Nav.Link
+                onClick={() => navigate('/notifications')}
+                className="d-flex flex-column align-items-center mx-2 nav-icon-container"
+              >
+                <FaBell className="nav-link-icon" />
+              </Nav.Link>
+            </OverlayTrigger>
+
+            {/* Wishlist */}
+            <OverlayTrigger placement="bottom" overlay={renderTooltip("Wishlist")}>
+              <Nav.Link
+                onClick={() => navigate('/wishlist')}
+                className="d-flex flex-column align-items-center mx-2 nav-icon-container"
+              >
+                <FaHeart className="nav-link-icon" />
+              </Nav.Link>
+            </OverlayTrigger>
+
+            {/* Request Product */}
+            <OverlayTrigger placement="bottom" overlay={renderTooltip("Request Product")}>
+              <Nav.Link
+                onClick={() => navigate('/request-product')}
+                className="d-flex flex-column align-items-center mx-2 nav-icon-container"
+              >
+                <FaBoxOpen className="nav-link-icon" />
+              </Nav.Link>
+            </OverlayTrigger>
+
+            {/* Choose Role */}
+            <OverlayTrigger placement="bottom" overlay={renderTooltip("Choose Role")}>
+              <Nav.Link
+                onClick={() => navigate('/choose-role')}
+                className="d-flex flex-column align-items-center mx-2 nav-icon-container"
+              >
+                <BiSolidSelectMultiple className="nav-link-icon" />
+              </Nav.Link>
+            </OverlayTrigger>
+
+            {/* Logout */}
+            <OverlayTrigger placement="bottom" overlay={renderTooltip("Logout")}>
+              <Nav.Link
+                onClick={() => navigate('/login')}
+                className="d-flex flex-column align-items-center mx-2 nav-icon-container"
+              >
+                <FaSignOutAlt className="nav-link-icon" />
+              </Nav.Link>
+            </OverlayTrigger>
           </Nav>
         </Navbar.Collapse>
       </Container>

@@ -58,7 +58,7 @@ export const removeFromWishlist = async (userId, productId) => {
   }
 };
 
-// Fetch user's wishlist
+//Fetch user's wishlist
 export const getWishlist = async (userId) => {
   try {
     const response = await axios.get(`${API_URL}/api/wishlist/${userId}`);
@@ -103,6 +103,31 @@ export const sendOtp = async (email) => {
     return response.data;
   } catch (error) {
     console.error('Error sending OTP:', error);
+    throw error;
+  }
+};
+
+// export const getWishlistProducts = async (userId) => {
+//   try {
+//     const response = await axios.get(`/api/wishlist/${userId}`);
+//     console.log('Wishlist API Response:', response.data);
+//     return response.data.wishlist.products; // Ensure this is returning an array of products
+//   } catch (error) {
+//     console.error('Error fetching wishlist:', error);
+//     throw error;
+//   }
+// };
+
+export const getWishlistProducts = async (userId) => {
+  try {
+    const response = await axios.get(`/api/wishlist/${userId}`);
+    console.log('Wishlist API Response:', response.data);
+    if (response.data && response.data.wishlist && Array.isArray(response.data.wishlist.products)) {
+      return response.data.wishlist.products;
+    }
+    throw new Error('Invalid wishlist response format');
+  } catch (error) {
+    console.error('Error fetching wishlist products:', error);
     throw error;
   }
 };

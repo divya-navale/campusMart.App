@@ -8,7 +8,6 @@ const RequestProduct = () => {
     productName: '',
     productCategory: '',
     description: '',
-    contactEmail: '',
   });
 
   const [submitted, setSubmitted] = useState(false);
@@ -69,17 +68,6 @@ const RequestProduct = () => {
                       placeholder="Provide more details about the product"
                       name="description"
                       value={formData.description}
-                      onChange={handleChange}
-                      required
-                    />
-                  </Form.Group>
-                  <Form.Group className="mb-3" controlId="formContactEmail">
-                    <Form.Label>Contact Email</Form.Label>
-                    <Form.Control
-                      type="email"
-                      placeholder="Enter your email address"
-                      name="contactEmail"
-                      value={formData.contactEmail}
                       onChange={handleChange}
                       required
                     />

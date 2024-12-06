@@ -15,7 +15,7 @@ const ForgotPassword = () => {
       const response = await getUserByEmail(email);
       console.log(response);
       const otpResponse = await sendOtp(email);
-      if(otpResponse.status == 200){
+      if (otpResponse.status == 200) {
         console.log("OTP sent to your email address");
       }
       navigate('/verify', { state: { email: email, source: 'forgot-password' } });
@@ -27,7 +27,7 @@ const ForgotPassword = () => {
   return (
     <Container className="mt-5">
       <Row className="justify-content-center">
-        <Col md={6}>
+        <Col md={4}>
           <h2 className="text-center mb-4">Forgot Password</h2>
           <p className="text-center">Enter your email to reset your password.</p>
           <Form onSubmit={handleForgotPassword}>
@@ -43,10 +43,12 @@ const ForgotPassword = () => {
             </Form.Group>
 
             {error && <div className="alert alert-danger">{error}</div>}
-            
-            <Button variant="primary" type="submit" className="mt-4">
-              Verify your account
-            </Button>
+
+            <div className="d-flex justify-content-center mt-4">
+              <Button variant="primary" type="submit" className="mt-4">
+                Verify your account
+              </Button>
+            </div>
           </Form>
 
           <div className="text-center mt-3">

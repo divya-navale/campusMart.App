@@ -26,7 +26,7 @@ const Login = () => {
   return (
     <Container className="mt-5">
       <Row className="justify-content-center">
-        <Col md={6}>
+        <Col md={4}>
           <Form onSubmit={handleLogin}>
             <Form.Group controlId="formEmail">
               <Form.Label>Email</Form.Label>
@@ -52,9 +52,11 @@ const Login = () => {
 
             {error && <p className="text-danger mt-3">{error}</p>}
 
-            <Button variant="primary" type="submit" className="mt-4">
-              Login
-            </Button>
+            <div className="d-flex justify-content-center mt-4">
+              <Button variant="primary" type="submit" style={{width: '30%'}}>
+                Login
+              </Button>
+            </div>
           </Form>
 
           <div className="d-flex justify-content-between mt-3">

@@ -52,7 +52,7 @@ const Signup = () => {
               <Form.Label>Email</Form.Label>
               <Form.Control
                 type="email"
-                placeholder="your.name@mail.edu"
+                placeholder="your.name@mail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required

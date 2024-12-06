@@ -21,6 +21,7 @@ import Notifications from './pages/common/Notifications';
 import Wishlist from './pages/common/Wishlist';
 
 import './App.css';
+import UpdatePassword from './pages/common/UpdatePassword';
 
 const Layout = ({ children }) => {
   const location = useLocation();
@@ -121,6 +122,7 @@ function App() {
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/profile" element={<BuyerProfile />} />
+            <Route path="/update-password" element={<UpdatePassword />} />
           </Routes>
         </Layout>
         <Footer />

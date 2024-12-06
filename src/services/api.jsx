@@ -188,3 +188,23 @@ export const logoutUser = async () => {
     throw error;
   }
 };
+
+export const getUserByEmail = async (email) => {
+  try {
+    const response = await api.get(`/api/users/email/${email}`);
+    console.log('User fetched successfully:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    throw error;
+  }
+};
+
+export const updatePassword = async (email, password) => {
+  try {
+    const response = await api.post('/api/users/update-password', { email, password });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error updating password');
+  }
+};

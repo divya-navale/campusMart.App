@@ -132,20 +132,22 @@ export const getWishlistProducts = async (userId) => {
   }
 };
 
-export const getProductsBySeller = async (sellerId) => {
+export const getProductsBySeller = async () => {
+  const sellerId = getUserIdFromToken();
   try {
     const response = await api.get(`/api/products/seller/${sellerId}`);
     return response.data;
-    
+
   } catch (error) {
     throw new Error('Failed to fetch products by seller: ' + error.message);
   }
 };
 
 export const addProduct = async (productData) => {
+  const sellerId = getUserIdFromToken();
   try {
     const formData = new FormData();
-    
+
     formData.append('name', productData.name);
     formData.append('category', productData.category);
     formData.append('price', productData.price);
@@ -158,7 +160,7 @@ export const addProduct = async (productData) => {
     formData.append('location', productData.location);
     formData.append('contact', productData.contact);
     formData.append('condition', productData.condition);
-    formData.append('sellerId', productData.sellerId);
+    formData.append('sellerId', sellerId);
     formData.append('image', productData.image);
     const response = await api.post(`/api/products`, formData, {
       headers: {
@@ -208,25 +210,17 @@ export const updatePassword = async (email, password) => {
   }
 };
 
-// api.js
-
-// Fetch user details by sellerId
 export const fetchUserDetails = async (sellerId) => {
   console.log(sellerId)
   try {
     const response = await api.get(`/api/users/${sellerId}`);
     console.log(response);
-    // if (!response.ok) {
-    //   throw new Error('Failed to fetch uuser details');
-    // }
-
-    return response.data;  // The response should contain the user data (name, email, location)
+    return response.data;  
   } catch (error) {
     console.error('Error fetching user details:', error.message);
-    throw error; // Propagate the error to the component
+    throw error; 
   }
 };
-
 
 //send notification 
 export const createNotification = async (buyerId, sellerId, productId) => {
@@ -240,9 +234,35 @@ export const createNotification = async (buyerId, sellerId, productId) => {
       message,
     });
 
-    return response.data;  // Return the notification data if needed
+    return response.data;
   } catch (error) {
     console.error('Error creating notification:', error);
-    throw error;  // Propagate the error so the component can handle it
+    throw error;
   }
+};
+
+export const getUserIdFromToken = () => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    console.error('No token found');
+    return null;
+  }
+  try {
+    const decodedToken = parseJwt(token);
+    return decodedToken.userId;
+  } catch (error) {
+    console.error('Error decoding token:', error);
+    return null;
+  }
+};
+
+// Function to decode JWT
+const parseJwt = (token) => {
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+
+  return JSON.parse(jsonPayload);
 };

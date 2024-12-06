@@ -50,10 +50,10 @@ const Signup = () => {
             </Form.Group>
 
             <Form.Group controlId="formEmail" className="mt-3">
-              <Form.Label>PFW Email</Form.Label>
+              <Form.Label>Email</Form.Label>
               <Form.Control
                 type="email"
-                placeholder="your.name@pfw.edu"
+                placeholder="your.name@mail.edu"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required

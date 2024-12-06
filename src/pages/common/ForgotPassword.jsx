@@ -29,13 +29,13 @@ const ForgotPassword = () => {
       <Row className="justify-content-center">
         <Col md={6}>
           <h2 className="text-center mb-4">Forgot Password</h2>
-          <p className="text-center">Enter your PFW email to reset your password.</p>
+          <p className="text-center">Enter your email to reset your password.</p>
           <Form onSubmit={handleForgotPassword}>
             <Form.Group controlId="formEmail">
-              <Form.Label>PFW Email</Form.Label>
+              <Form.Label>Email</Form.Label>
               <Form.Control
                 type="email"
-                placeholder="your.name@pfw.edu"
+                placeholder="your.name@mail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required

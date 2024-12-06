@@ -29,10 +29,10 @@ const Login = () => {
         <Col md={6}>
           <Form onSubmit={handleLogin}>
             <Form.Group controlId="formEmail">
-              <Form.Label>PFW Email</Form.Label>
+              <Form.Label>Email</Form.Label>
               <Form.Control
                 type="email"
-                placeholder="your.name@pfw.edu"
+                placeholder="your.name@mail.edu"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required

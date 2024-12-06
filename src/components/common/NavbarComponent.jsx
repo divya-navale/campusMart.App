@@ -112,30 +112,31 @@ const NavbarComponent = () => {
               </Nav.Link>
             </OverlayTrigger>
 
-            <OverlayTrigger
-              placement="bottom"
-              overlay={renderTooltip("Wishlist")}
-            >
-              <Nav.Link
-                onClick={() => navigate("/wishlist")}
-                className="d-flex flex-column align-items-center mx-2 nav-icon-container"
-              >
-                <FaHeart className="nav-link-icon" />
-              </Nav.Link>
-            </OverlayTrigger>
-
-            <OverlayTrigger
-              placement="bottom"
-              overlay={renderTooltip("Request Product")}
-            >
-              <Nav.Link
-                onClick={() => navigate("/request-product")}
-                className="d-flex flex-column align-items-center mx-2 nav-icon-container"
-              >
-                <FaBoxOpen className="nav-link-icon" />
-              </Nav.Link>
-            </OverlayTrigger>
-
+            {
+              localStorage.getItem("userRole") === 'buyer' && (
+                <><OverlayTrigger
+                  placement="bottom"
+                  overlay={renderTooltip("Wishlist")}
+                >
+                  <Nav.Link
+                    onClick={() => navigate("/wishlist")}
+                    className="d-flex flex-column align-items-center mx-2 nav-icon-container"
+                  >
+                    <FaHeart className="nav-link-icon" />
+                  </Nav.Link>
+                </OverlayTrigger><OverlayTrigger
+                  placement="bottom"
+                  overlay={renderTooltip("Request Product")}
+                >
+                    <Nav.Link
+                      onClick={() => navigate("/request-product")}
+                      className="d-flex flex-column align-items-center mx-2 nav-icon-container"
+                    >
+                      <FaBoxOpen className="nav-link-icon" />
+                    </Nav.Link>
+                  </OverlayTrigger></>
+              ) 
+            }
             <OverlayTrigger
               placement="bottom"
               overlay={renderTooltip("Choose Role")}

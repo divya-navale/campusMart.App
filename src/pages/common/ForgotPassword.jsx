@@ -1,16 +1,27 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import { getUserByEmail, sendOtp } from '../../services/api';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleForgotPassword = (e) => {
+  const handleForgotPassword = async (e) => {
     e.preventDefault();
-    console.log('Password reset requested for:', email);
-    alert(`If an account with ${email} exists, a password reset link will be sent.`);
-    navigate('/login');
+    setError('');
+    try {
+      const response = await getUserByEmail(email);
+      console.log(response);
+      const otpResponse = await sendOtp(email);
+      if(otpResponse.status == 200){
+        console.log("OTP sent to your email address");
+      }
+      navigate('/verify', { state: { email: email, source: 'forgot-password' } });
+    } catch (err) {
+      setError('No user found with the given Email');
+    }
   };
 
   return (
@@ -31,8 +42,10 @@ const ForgotPassword = () => {
               />
             </Form.Group>
 
-            <Button variant="primary" type="submit" className="mt-4" block>
-              Send Reset Link
+            {error && <div className="alert alert-danger">{error}</div>}
+            
+            <Button variant="primary" type="submit" className="mt-4">
+              Verify your account
             </Button>
           </Form>
 

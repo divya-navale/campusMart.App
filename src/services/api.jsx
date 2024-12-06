@@ -165,7 +165,6 @@ export const addProduct = async (productData) => {
         'Content-Type': 'multipart/form-data',
       },
     });
-
     return response.data.product;
   } catch (error) {
     throw new Error('Failed to add product: ' + error.message);
@@ -186,5 +185,64 @@ export const logoutUser = async () => {
   } catch (error) {
     console.error('Error logging out:', error);
     throw error;
+  }
+};
+
+export const getUserByEmail = async (email) => {
+  try {
+    const response = await api.get(`/api/users/email/${email}`);
+    console.log('User fetched successfully:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    throw error;
+  }
+};
+
+export const updatePassword = async (email, password) => {
+  try {
+    const response = await api.post('/api/users/update-password', { email, password });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error updating password');
+  }
+};
+
+// api.js
+
+// Fetch user details by sellerId
+export const fetchUserDetails = async (sellerId) => {
+  console.log(sellerId)
+  try {
+    const response = await api.get(`/api/users/${sellerId}`);
+    console.log(response);
+    // if (!response.ok) {
+    //   throw new Error('Failed to fetch uuser details');
+    // }
+
+    return response.data;  // The response should contain the user data (name, email, location)
+  } catch (error) {
+    console.error('Error fetching user details:', error.message);
+    throw error; // Propagate the error to the component
+  }
+};
+
+
+//send notification 
+export const createNotification = async (buyerId, sellerId, productId) => {
+  try {
+    const message = `Buyer with ID: ${buyerId} is interested in your product with ID: ${productId}.`;
+
+    const response = await api.post('/api/notifications', {
+      buyerId,
+      sellerId,
+      productId,
+      message,
+    });
+
+    return response.data;  // Return the notification data if needed
+  } catch (error) {
+    console.error('Error creating notification:', error);
+    throw error;  // Propagate the error so the component can handle it
   }
 };

@@ -11,7 +11,7 @@ const Verification = () => {
     const [loading, setLoading] = useState(false);
     const [resending, setResending] = useState(false);
     const location = useLocation();
-    const { email } = location.state || '';
+    const { email, source } = location.state || {};
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -27,8 +27,11 @@ const Verification = () => {
 
         try {
             const response = await verifyOtp(email, otp);
-            navigate('/login');
-            console.log(response);
+            if( source == 'signup'){
+                navigate('/login');
+            } else {
+                navigate('/update-password', { state: { email: email } });
+            }
             if (response.status == 200) {
                 setMessage(response.message);
                 navigate('/login');
@@ -63,7 +66,7 @@ const Verification = () => {
     };
 
     return (
-        <div className="container d-flex justify-content-center align-items-center vh-100">
+        <div className="container d-flex justify-content-center align-items-center vh-80">
             <div className="card p-4 shadow" style={{ width: '400px' }}>
                 <h4 className="text-center mb-4">Verify Your Email</h4>
                 <p className="text-center">

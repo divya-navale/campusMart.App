@@ -52,7 +52,7 @@ const Login = () => {
 
             {error && <p className="text-danger mt-3">{error}</p>}
 
-            <Button variant="primary" type="submit" className="mt-4" block>
+            <Button variant="primary" type="submit" className="mt-4">
               Login
             </Button>
           </Form>

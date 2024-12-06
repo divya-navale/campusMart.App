@@ -25,7 +25,7 @@ const Signup = () => {
     try {
       const response = await signupUser(fullName, email, password, studentlocation);
       console.log('User created successfully:', response);
-      navigate('/verify', { state: { email: email } });
+      navigate('/verify', { state: { email: email, source: 'signup' } });
     } catch (err) {
       setError(err.message);
       console.error(err);

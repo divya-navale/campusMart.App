@@ -35,10 +35,9 @@ const Signup = () => {
   return (
     <Container className="mt-5">
       <Row className="justify-content-center">
-        <Col md={6}>
-          <h2 className="text-center mb-4">Create Account</h2>
+        <Col md={4}>
           <Form onSubmit={handleSignup}>
-            <Form.Group controlId="formFullName">
+            <Form.Group controlId="formFullName" className="mb-3">
               <Form.Label>Full Name</Form.Label>
               <Form.Control
                 type="text"
@@ -49,7 +48,7 @@ const Signup = () => {
               />
             </Form.Group>
 
-            <Form.Group controlId="formEmail" className="mt-3">
+            <Form.Group controlId="formEmail" className="mb-3">
               <Form.Label>Email</Form.Label>
               <Form.Control
                 type="email"
@@ -60,10 +59,9 @@ const Signup = () => {
               />
             </Form.Group>
 
-            <Form.Group controlId="formStudentLocation" className="mt-3">
+            <Form.Group controlId="formStudentLocation" className="mb-3">
               <Form.Label>Student Location</Form.Label>
-              <Form.Control
-                as="select"
+              <Form.Select
                 value={studentlocation}
                 onChange={(e) => setStudentLocation(e.target.value)}
                 required
@@ -74,10 +72,10 @@ const Signup = () => {
                     {option.label}
                   </option>
                 ))}
-              </Form.Control>
+              </Form.Select>
             </Form.Group>
 
-            <Form.Group controlId="formPassword" className="mt-3">
+            <Form.Group controlId="formPassword" className="mb-3">
               <Form.Label>Password</Form.Label>
               <Form.Control
                 type="password"
@@ -88,7 +86,7 @@ const Signup = () => {
               />
             </Form.Group>
 
-            <Form.Group controlId="formConfirmPassword" className="mt-3">
+            <Form.Group controlId="formConfirmPassword" className="mb-3">
               <Form.Label>Confirm Password</Form.Label>
               <Form.Control
                 type="password"
@@ -101,19 +99,17 @@ const Signup = () => {
 
             {error && <p className="text-danger mt-3">{error}</p>}
 
-            {/* Create Account Button */}
-            <Button variant="primary" type="submit" className="mt-4 w-100">
-              Create Account
-            </Button>
+            <div className="text-center">
+              <Button variant="primary" type="submit" className="mt-4 w-50">
+                Create Account
+              </Button>
+            </div>
 
-            {/* Back to Login Button with spacing */}
-            <Button
-              variant="outline-primary"
-              onClick={() => navigate('/login')}
-              className="mt-3 mb-5 w-100"
-            >
-              Back to Login
-            </Button>
+            <div className="text-center mt-3">
+              <Button variant="link" onClick={() => navigate('/login')}>
+                Back to Login
+              </Button>
+            </div>
           </Form>
         </Col>
       </Row>

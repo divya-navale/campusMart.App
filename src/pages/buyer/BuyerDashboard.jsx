@@ -7,24 +7,33 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../styles/buyerDashboard.css';
 
+
 const BuyerDashboard = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [wishlist, setWishlist] = useState([]);
-  const userId = '6744d64bb94292764d48fe7f';
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [sellerDetails, setSellerDetails] = useState(null);
   const [loadingSeller, setLoadingSeller] = useState(false);
+
+
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const productsData = await fetchProducts();
         setProducts(productsData);
-        const wishlistData = await getWishlist(userId);
-        const userWishlist = wishlistData.wishlist.products.map((product) => product._id);
-        setWishlist(userWishlist);
+        const wishlistData = await getWishlist();
+        if (wishlistData.message && wishlistData.message === 'No wishlisted products for this user') {
+          console.log('No wishlisted products for this user');
+        }
+        else {
+          const userWishlist = wishlistData.wishlist.products.map((product) => product._id);
+          setWishlist(userWishlist);
+
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
         toast.error('Failed to load data. Please try again!', { position: 'top-center' });
@@ -37,7 +46,7 @@ const BuyerDashboard = () => {
   const toggleWishlist = async (productId) => {
     if (wishlist.includes(productId)) {
       try {
-        await removeFromWishlist(userId, productId);
+        await removeFromWishlist(productId);
         setWishlist(wishlist.filter((id) => id !== productId));
         toast.info('Product removed from wishlist!', { position: 'top-right' });
       } catch (error) {
@@ -46,7 +55,7 @@ const BuyerDashboard = () => {
       }
     } else {
       try {
-        await addToWishlist(userId, productId);
+        await addToWishlist(productId);
         setWishlist([...wishlist, productId]);
         toast.success('Product added to wishlist!', { position: 'top-right' });
       } catch (error) {
@@ -93,8 +102,8 @@ const BuyerDashboard = () => {
 
   const handleSendNotification = async () => {
     try {
-      const notificationData = await createNotification(userId, selectedProduct.sellerId, selectedProduct._id);
-      
+      const notificationData = await createNotification(selectedProduct.sellerId, selectedProduct._id);
+
       toast.success('Notification sent successfully to Seller!', { position: 'top-center' });
       handleCloseModal();
     } catch (error) {

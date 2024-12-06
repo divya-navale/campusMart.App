@@ -4,6 +4,7 @@ import { Container, Row, Col, Card, Button, Modal } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaTrashAlt, FaEnvelope } from 'react-icons/fa';
+import gif from './../../assets/emptycart.gif';
 
 const WishlistPage = () => {
   const [wishlistProducts, setWishlistProducts] = useState([]);
@@ -13,17 +14,22 @@ const WishlistPage = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [sellerDetails, setSellerDetails] = useState(null);
   const [loadingSeller, setLoadingSeller] = useState(false);
-
-  const userId = '6744d64bb94292764d48fe7f';
+  const [emptyWishlistImage, setEmptyWishlistImage] = useState('');
 
   useEffect(() => {
     const fetchWishlist = async () => {
       try {
-        const products = await getWishlistProducts(userId);
-        setWishlistProducts(products);
+        const products = await getWishlistProducts();
+        console.log('Fetched Wishlist Products:', products); 
+        
+        if (products.length === 0) {
+          setError('Your wishlist is empty.');
+          setEmptyWishlistImage(gif);
+        } else {
+          setWishlistProducts(products);
+        }
       } catch (err) {
         setError('Failed to load wishlist. Please try again.');
-        toast.error('Failed to load wishlist.', { position: 'top-center' });
       } finally {
         setLoading(false);
       }
@@ -32,9 +38,10 @@ const WishlistPage = () => {
     fetchWishlist();
   }, []);
 
+  
   const handleRemoveFromWishlist = async (productId) => {
     try {
-      await removeFromWishlist(userId, productId);
+      await removeFromWishlist(productId);
       setWishlistProducts(wishlistProducts.filter((product) => product._id !== productId));
       toast.info('Product removed from wishlist!', { position: 'top-right' });
     } catch (error) {
@@ -71,7 +78,7 @@ const WishlistPage = () => {
 
   const handleSendNotification = async () => {
     try {
-      await createNotification(userId, selectedProduct.sellerId, selectedProduct._id);
+      await createNotification(selectedProduct.sellerId, selectedProduct._id);
       toast.success('Notification sent successfully to Seller!', { position: 'top-center' });
       handleCloseModal();
     } catch (error) {
@@ -84,11 +91,35 @@ const WishlistPage = () => {
   }
 
   if (error) {
-    return <h2 className="text-center mt-5">{error}</h2>;
+    return (
+      <div className="text-center mt-5">
+        <h2>{error}</h2>
+        {emptyWishlistImage && (
+          <img
+            src={emptyWishlistImage} 
+            alt="Empty Wishlist"
+            style={{ width: '300px', height: 'auto', display: 'block', margin: '0 auto' }}
+          />
+        )}
+        <p>No products in your wishlist. Sstart adding some!</p>
+      </div>
+    );
   }
 
   if (wishlistProducts.length === 0) {
-    return <h2 className="text-center mt-5">Your wishlist is empty.</h2>;
+    return (
+      <div className="text-center mt-5">
+        <h2>{error}</h2>
+        {emptyWishlistImage && (
+          <img
+            src={emptyWishlistImage} 
+            alt="Empty Wishlist"
+            style={{ width: '300px', height: 'auto', display: 'block', margin: '0 auto' }}
+          />
+        )}
+        <p>No products in your wishlist. dStart adding some!</p>
+      </div>
+    );
   }
 
   return (

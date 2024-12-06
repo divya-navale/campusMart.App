@@ -1,15 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Form, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { RESIDENCE_OPTIONS } from '../../constants/options';
+import { getUserDetails } from './../../services/api'; // Import API call function
 
 const BuyerProfile = () => {
   const navigate = useNavigate();
+  const { id } = useParams(); // Get user ID from URL params
   const [formData, setFormData] = useState({
-    fullName: 'John Doe',
-    email: 'john@example.com',
+    fullName: '',
+    password: '',
     studentLocation: 'On-Campus',
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const user = await getUserDetails(id);
+        console.log("user" + user.name)
+        setFormData({
+          fullName: user.name,
+          password: '', // Don't pre-fill password for security reasons
+          studentLocation: user.location,
+        });
+      } catch (err) {
+        setError('Failed to fetch user details');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserDetails();
+  }, [id]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -21,6 +44,14 @@ const BuyerProfile = () => {
     console.log('Updated Info:', formData);
     navigate('/buyer-dashboard'); // Redirect to dashboard after update
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <Container className="mt-5">
@@ -37,11 +68,11 @@ const BuyerProfile = () => {
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>Email</Form.Label>
+          <Form.Label>Password</Form.Label>
           <Form.Control
-            type="email"
-            name="email"
-            value={formData.email}
+            type="password"
+            name="password"
+            value={formData.password}
             onChange={handleInputChange}
           />
         </Form.Group>

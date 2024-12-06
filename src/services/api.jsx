@@ -65,7 +65,8 @@ export const fetchProductById = async (productId) => {
   }
 };
 
-export const addToWishlist = async (userId, productId) => {
+export const addToWishlist = async (productId) => {
+  const userId = getUserIdFromToken();
   try {
     const response = await api.post(`/api/wishlist/add`, { userId, productId });
     return response.data;
@@ -75,7 +76,8 @@ export const addToWishlist = async (userId, productId) => {
   }
 };
 
-export const removeFromWishlist = async (userId, productId) => {
+export const removeFromWishlist = async (productId) => {
+  const userId = getUserIdFromToken();
   try {
     const response = await api.delete(`/api/wishlist/remove`, {
       data: { userId, productId },
@@ -87,7 +89,8 @@ export const removeFromWishlist = async (userId, productId) => {
   }
 };
 
-export const getWishlist = async (userId) => {
+export const getWishlist = async () => {
+  const userId = getUserIdFromToken();
   try {
     const response = await api.get(`/api/wishlist/${userId}`);
     return response.data;
@@ -118,10 +121,14 @@ export const sendOtp = async (email) => {
   }
 };
 
-export const getWishlistProducts = async (userId) => {
+export const getWishlistProducts = async () => {
+  const userId = getUserIdFromToken();
   try {
     const response = await api.get(`/api/wishlist/${userId}`);
     console.log('Wishlist API Response:', response.data);
+    if (response.data.message && response.data.message === 'No wishlisted products for this user') {
+      return [];
+    }
     if (response.data && response.data.wishlist && Array.isArray(response.data.wishlist.products)) {
       return response.data.wishlist.products;
     }
@@ -222,8 +229,20 @@ export const fetchUserDetails = async (sellerId) => {
   }
 };
 
+//getuserdetails from userid
+export const getUserDetails = async () => {
+  const userid = getUserIdFromToken();
+  try {
+    const response = await api.get(`api/users/${userid}`);
+    return response.data;
+  } catch (error) {
+    throw new Error('Error fetching user details');
+  }
+};
+
 //send notification 
-export const createNotification = async (buyerId, sellerId, productId) => {
+export const createNotification = async (sellerId, productId) => {
+  const buyerId = getUserIdFromToken();
   try {
     const message = `Buyer with ID: ${buyerId} is interested in your product with ID: ${productId}.`;
 
@@ -266,3 +285,4 @@ const parseJwt = (token) => {
 
   return JSON.parse(jsonPayload);
 };
+

@@ -5,15 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import { FaHeart } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify'; // Import Toastify
 import 'react-toastify/dist/ReactToastify.css'; // Import Toastify styles
-import '../../styles/buyerDashboard.css'; // Import SCSS file
-
+import '../../styles/buyerDashboard.css';
 
 const BuyerDashboard = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [wishlist, setWishlist] = useState([]); // Stores product IDs in the wishlist
   const userId = '6744d64bb94292764d48fe7f'; // Replace with the actual user ID
-
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -73,13 +71,15 @@ const BuyerDashboard = () => {
   };
 
   return (
-    <Container fluid className="dashboardcontainer">
-      <ToastContainer />
-      <h2>Available Products</h2>
+    <Container className="mt-5">
+      <div className="d-flex justify-content-center align-items-center mb-3">
+        <h2>Available Products</h2>
+      </div>
+
       <Row>
         {products.map((product) => (
-          <Col md={4} sm={6} key={product._id} className="mb-4">
-            <Card className="card">
+          <Col md={4} sm={6} className="mb-4" key={product._id}>
+            <Card className="h-100 shadow-sm">
               <Card.Img
                 variant="top"
                 src={product.imageUrl}
@@ -87,10 +87,10 @@ const BuyerDashboard = () => {
                 className="card-img"
                 onClick={() => viewProductDetails(product._id)}
               />
-              <Card.Body className="d-flex flex-column">
-                <Card.Title className="card-title">{product.name}</Card.Title>
-                <Card.Text className="card-text">${product.price}</Card.Text>
-                <div className="d-flex justify-content-between align-items-center mt-auto">
+              <Card.Body>
+                <Card.Title>{product.name}</Card.Title>
+                <Card.Text>Price: ${product.price}</Card.Text>
+                <div className="d-flex justify-content-between align-items-center">
                   <div className="d-flex align-items-center">
                     <FaHeart
                       size={18}
@@ -101,7 +101,7 @@ const BuyerDashboard = () => {
                     />
                     <span className="wishlist-label">Wishlist</span>
                   </div>
-                  <Button className="contact-btn" onClick={() => handleShowModal(product)}>
+                  <Button variant="primary" onClick={() => handleShowModal(product)}>
                     Contact Seller
                   </Button>
                 </div>
@@ -110,6 +110,8 @@ const BuyerDashboard = () => {
           </Col>
         ))}
       </Row>
+
+      {/* Contact Seller Modal */}
       {selectedProduct && (
         <Modal show={showModal} onHide={handleCloseModal} centered>
           <Modal.Header closeButton>
@@ -133,13 +135,13 @@ const BuyerDashboard = () => {
               </tbody>
             </table>
             <div className="d-flex justify-content-end mt-4">
-              <Button className="notification-btn" onClick={handleCloseModal}>
-                Send Notification
-              </Button>
+              <Button variant="secondary" onClick={handleCloseModal}>Send Notification</Button>
             </div>
           </Modal.Body>
         </Modal>
       )}
+
+      <ToastContainer />
     </Container>
   );
 };

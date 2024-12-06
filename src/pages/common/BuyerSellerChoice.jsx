@@ -11,12 +11,11 @@ const BuyerSellerChoice = () => {
   };
 
   const handleChoice = (role) => {
+    setRole(role);
     if (role === 'buyer') {
       navigate('/buyer-dashboard');
-      setRole('buyer');
     } else {
       navigate('/seller-dashboard');
-      setRole('seller');
     }
   };
 

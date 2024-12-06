@@ -139,7 +139,7 @@ const BuyerDashboard = () => {
                     />
                     <span className="wishlist-label">Wishlist</span>
                   </div>
-                  <Button variant="primary" onClick={() => handleShowModal(product)}>
+                  <Button className="contact-btn" variant="primary" onClick={() => handleShowModal(product)}>
                     Contact Seller
                   </Button>
                 </div>

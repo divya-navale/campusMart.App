@@ -1,23 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { getWishlistProducts, removeFromWishlist } from './../../services/api';
-import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import { getWishlistProducts, removeFromWishlist, fetchUserDetails, createNotification } from './../../services/api';
+import { Container, Row, Col, Card, Button, Modal } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FaTrashAlt, FaEnvelope } from 'react-icons/fa';
 
 const WishlistPage = () => {
   const [wishlistProducts, setWishlistProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [sellerDetails, setSellerDetails] = useState(null);
+  const [loadingSeller, setLoadingSeller] = useState(false);
+
   const userId = '6744d64bb94292764d48fe7f';
 
   useEffect(() => {
     const fetchWishlist = async () => {
       try {
         const products = await getWishlistProducts(userId);
-        console.log('Fetched Wishlist Products:', products); // Debug log
         setWishlistProducts(products);
       } catch (err) {
-        console.error('Failed to fetch wishlist:', err);
         setError('Failed to load wishlist. Please try again.');
         toast.error('Failed to load wishlist.', { position: 'top-center' });
       } finally {
@@ -34,8 +38,44 @@ const WishlistPage = () => {
       setWishlistProducts(wishlistProducts.filter((product) => product._id !== productId));
       toast.info('Product removed from wishlist!', { position: 'top-right' });
     } catch (error) {
-      console.error('Failed to remove product from wishlist:', error);
       toast.error('Failed to remove from wishlist. Please try again!', { position: 'top-right' });
+    }
+  };
+
+  const fetchSellerDetails = async (sellerId) => {
+    setLoadingSeller(true);
+    try {
+      const userData = await fetchUserDetails(sellerId);
+      setSellerDetails({
+        name: userData.name,
+        email: userData.email,
+      });
+    } catch (error) {
+      toast.error('Failed to load seller details. Please try again!', { position: 'top-center' });
+    } finally {
+      setLoadingSeller(false);
+    }
+  };
+
+  const handleShowModal = async (product) => {
+    setSelectedProduct(product);
+    await fetchSellerDetails(product.sellerId);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedProduct(null);
+    setSellerDetails(null);
+  };
+
+  const handleSendNotification = async () => {
+    try {
+      await createNotification(userId, selectedProduct.sellerId, selectedProduct._id);
+      toast.success('Notification sent successfully to Seller!', { position: 'top-center' });
+      handleCloseModal();
+    } catch (error) {
+      toast.error('Failed to send notification. Please try again!', { position: 'top-center' });
     }
   };
 
@@ -55,38 +95,74 @@ const WishlistPage = () => {
     <Container fluid className="py-4" style={{ backgroundColor: '#f8f9fa' }}>
       <ToastContainer />
       <h2 className="text-center mb-4" style={{ color: '#343a40' }}>Your Wishlist</h2>
-      <Row>
+      <Row className="g-4">
         {wishlistProducts.map((product) => (
-          <Col md={4} sm={6} key={product._id} className="mb-4">
-            <Card className="h-100 shadow-sm" style={{ border: '1px solid #dee2e6', borderRadius: '10px' }}>
+          <Col md={6} key={product._id}>
+            <Card className="shadow-sm h-100 d-flex flex-row align-items-stretch" style={{ border: '1px solid #dee2e6', borderRadius: '10px' }}>
               <Card.Img
-                variant="top"
-                src={product.imageUrl ? product.imageUrl : '/placeholder.jpg'}
+                src={product.imageUrl}
                 alt={product.name}
-                style={{ height: '200px', objectFit: 'cover' }}
-                onError={(e) => {
-                  e.target.src = '/placeholder.jpg'; // Fallback to placeholder
+                style={{
+                  width: '40%',
+                  height: 'auto',
+                  objectFit: 'cover',
+                  borderTopLeftRadius: '10px',
+                  borderBottomLeftRadius: '10px',
                 }}
               />
-              <Card.Body>
-                <Card.Title style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#495057' }}>
-                  {product.name}
-                </Card.Title>
-                <Card.Text style={{ color: '#6c757d', fontSize: '1rem' }}>
-                  ${product.price}
-                </Card.Text>
-                <Card.Text>{product.description}</Card.Text>
-                <Button
-                  variant="danger"
-                  onClick={() => handleRemoveFromWishlist(product._id)}
-                >
-                  Remove from Wishlist
-                </Button>
+              <Card.Body className="d-flex flex-column">
+                <div className="d-flex justify-content-between align-items-start">
+                  <div>
+                    <Card.Title style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#495057' }}>
+                      {product.name}
+                    </Card.Title>
+                    <Card.Text style={{ color: '#6c757d', fontSize: '1rem' }}>
+                      Price: ${product.price}
+                    </Card.Text>
+                  </div>
+                  <div className="d-flex">
+                    <FaTrashAlt
+                      size={20}
+                      color='#e63946'
+                      className="wishlist-icon ms-2"
+                      onClick={() => handleRemoveFromWishlist(product._id)}
+                      title={'Remove from Wishlist'}
+                      style={{ cursor: 'pointer' }}
+                    />
+                    <FaEnvelope
+                      size={20}
+                      color="#007bff"
+                      className="contact-icon ms-3"
+                      onClick={() => handleShowModal(product)}
+                      title="Contact Seller"
+                      style={{ cursor: 'pointer' }}
+                    />
+                  </div>
+                </div>
+                <Card.Text className="text-muted mt-2">{product.description}</Card.Text>
               </Card.Body>
+
             </Card>
           </Col>
         ))}
       </Row>
+
+      {selectedProduct && sellerDetails && !loadingSeller && (
+        <Modal show={showModal} onHide={handleCloseModal} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Contact Seller</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p><strong>Name:</strong> {sellerDetails.name}</p>
+            <p><strong>Email:</strong> {sellerDetails.email}</p>
+            <div className="d-flex justify-content-end">
+              <Button variant="secondary" onClick={handleSendNotification}>
+                Send Notification
+              </Button>
+            </div>
+          </Modal.Body>
+        </Modal>
+      )}
     </Container>
   );
 };

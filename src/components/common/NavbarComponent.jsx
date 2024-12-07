@@ -26,7 +26,7 @@ const NavbarComponent = () => {
     "/profile",
     "/wishlist",
     "/request-product",
-  ].includes(location.pathname);
+  ].includes(location.pathname) || location.pathname.startsWith("/product");
 
   const renderTooltip = (text) => <Tooltip>{text}</Tooltip>;
 

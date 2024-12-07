@@ -26,18 +26,18 @@ const Layout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Redirect user if they haven't selected a role
-  // useEffect(() => {
-  //   if (location.pathname !== "/signup" && location.pathname !== "/forgot-password" && location.pathname !== "/choose-role") {
-  //     const token = localStorage.getItem('token');
-  //     if (!token) {
-  //       navigate('/login');
-  //     }
-  //   }
-  // }, [location, navigate]);
+  // Add condition to hide search bar on product detail page
+  const isProductPage = location.pathname.startsWith("/product/");
 
-  const isBuyerRoute = location.pathname.startsWith("/buyer-dashboard") || location.pathname === "/buyer-profile";
-  const isSellerRoute = location.pathname.startsWith("/seller-dashboard") || location.pathname === "/seller-profile";
+  const isBuyerRoute =
+    location.pathname.startsWith("/buyer-dashboard") ||
+    location.pathname === "/buyer-profile" ||
+    location.pathname.startsWith("/product/");
+
+  const isSellerRoute =
+    location.pathname.startsWith("/seller-dashboard") ||
+    location.pathname === "/seller-profile";
+
   const shouldShowNavbar =
     location.pathname === "/notifications" ||
     location.pathname === "/profile" ||
@@ -61,13 +61,13 @@ const Layout = ({ children }) => {
 
   return (
     <>
-      {/* Navbar for specific routes */}
-      {shouldShowNavbar && <NavbarComponent />}
+      {/* Conditionally render the Navbar */}
+      <NavbarComponent showSearchBar={!isProductPage} /> {/* Hide search bar on product page */}
 
-      {/* Buyer Header Layout (excluding profile and request product) */}
+      {/* Buyer Header Layout (including product details page) */}
       {isBuyerRoute && location.pathname !== "/buyer-profile" && (
         <div className="d-flex">
-          <BuyerHeader />
+          <BuyerHeader showSearchBar={location.pathname !== "/product/:productId"} />
           <div className="flex-grow-1">{children}</div>
         </div>
       )}

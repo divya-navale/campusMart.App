@@ -4,6 +4,8 @@ import { MdProductionQuantityLimits } from "react-icons/md";
 import './../../styles/style.css';
 import { submitProductRequest, getUserProductRequests, deleteProductRequest } from '../../services/api';
 import { FaTrashAlt } from 'react-icons/fa';
+import { CATEGORY_OPTIONS } from '../../constants/options';
+
 
 const RequestProduct = () => {
   const [formData, setFormData] = useState({
@@ -88,13 +90,13 @@ const RequestProduct = () => {
                         <p>{product.description}</p>
                       </div>
                       <FaTrashAlt
-                      size={20}
-                      color='#e63946'
-                      className="wishlist-icon ms-2"
-                      onClick={() => handleDelete(product._id)}
-                      title={'Remove from requests'}
-                      style={{ cursor: 'pointer' }}
-                    />
+                        size={20}
+                        color='#e63946'
+                        className="wishlist-icon ms-2"
+                        onClick={() => handleDelete(product._id)}
+                        title={'Remove from requests'}
+                        style={{ cursor: 'pointer' }}
+                      />
                     </ListGroup.Item>
                   ))
                 )}
@@ -132,15 +134,20 @@ const RequestProduct = () => {
                     />
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formProductCategory">
-                    <Form.Label>Product Category</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="E.g., Electronics, Furniture, Books"
+                    <Form.Label>Category</Form.Label>
+                    <Form.Select
                       name="productCategory"
                       value={formData.productCategory}
                       onChange={handleChange}
                       required
-                    />
+                    >
+                      <option value="">Select Category</option>
+                      {CATEGORY_OPTIONS.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Form.Select>
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formDescription">
                     <Form.Label>Description</Form.Label>

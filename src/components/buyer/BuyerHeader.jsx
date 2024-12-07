@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { Form, Card, Badge, Accordion, Button } from 'react-bootstrap';
 import { Home, DollarSign, Package, Clock, Activity, Grid, Filter } from 'lucide-react';
-import { RESIDENCE_OPTIONS, PRICE_OPTIONS, CONDITION_OPTIONS, USAGE_OPTIONS,  AGE_OPTIONS, CATEGORY_OPTIONS } from '../../constants/options';
+import { RESIDENCE_OPTIONS, PRICE_OPTIONS, CONDITION_OPTIONS,  AGE_OPTIONS, CATEGORY_OPTIONS } from '../../constants/options';
 
 
 const BuyerHeader = () => {
   const [selectedResidence, setSelectedResidence] = useState([]);
   const [selectedPriceRange, setSelectedPriceRange] = useState([]);
   const [selectedCondition, setSelectedCondition] = useState([]);
-  const [selectedUsage, setSelectedUsage] = useState([]);
   const [selectedAge, setSelectedAge] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState([]);
 
@@ -23,7 +22,6 @@ const BuyerHeader = () => {
     setSelectedResidence([]);
     setSelectedPriceRange([]);
     setSelectedCondition([]);
-    setSelectedUsage([]);
     setSelectedAge([]);
     setSelectedCategory([]);
   };
@@ -57,7 +55,6 @@ const BuyerHeader = () => {
       selectedResidence,
       selectedPriceRange,
       selectedCondition,
-      selectedUsage,
       selectedAge,
       selectedCategory
     ].reduce((acc, curr) => acc + curr.length, 0);
@@ -113,19 +110,6 @@ const BuyerHeader = () => {
                 options={CONDITION_OPTIONS}
                 selectedValues={selectedCondition}
                 onChange={handleCheckboxChange(selectedCondition, setSelectedCondition)}
-              />
-            </Accordion.Body>
-          </Accordion.Item>
-
-          <Accordion.Item eventKey="3">
-            <Accordion.Header>
-              <Package size={16} className="me-2" /> Usage
-            </Accordion.Header>
-            <Accordion.Body>
-              <CheckboxGroup
-                options={USAGE_OPTIONS}
-                selectedValues={selectedUsage}
-                onChange={handleCheckboxChange(selectedUsage, setSelectedUsage)}
               />
             </Accordion.Body>
           </Accordion.Item>

@@ -286,3 +286,7 @@ const parseJwt = (token) => {
   return JSON.parse(jsonPayload);
 };
 
+
+export const updateProduct = (id, productData) => {
+  
+}

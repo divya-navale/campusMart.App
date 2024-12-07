@@ -28,14 +28,14 @@ const Layout = ({ children }) => {
   const navigate = useNavigate();
 
   // Redirect user if they haven't selected a role
-  useEffect(() => {
-    if (location.pathname !== "/signup" && location.pathname !== "/forgot-password" && location.pathname !== "/choose-role") {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/login');
-      }
-    }
-  }, [location, navigate]);
+  // useEffect(() => {
+  //   if (location.pathname !== "/signup" && location.pathname !== "/forgot-password" && location.pathname !== "/choose-role") {
+  //     const token = localStorage.getItem('token');
+  //     if (!token) {
+  //       navigate('/login');
+  //     }
+  //   }
+  // }, [location, navigate]);
 
   const isBuyerRoute = location.pathname.startsWith("/buyer-dashboard") || location.pathname === "/buyer-profile";
   const isSellerRoute = location.pathname.startsWith("/seller-dashboard") || location.pathname === "/seller-profile";

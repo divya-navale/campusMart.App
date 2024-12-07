@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Form, Modal } from 'react-bootstrap';
-import { getProductsBySeller, addProduct, } from './../../services/api';
+import { getProductsBySeller, addProduct, updateProduct } from './../../services/api';
+import { RESIDENCE_OPTIONS, CATEGORY_OPTIONS, CONDITION_OPTIONS } from '../../constants/options';
 
 const SellerPage = () => {
   const [products, setProducts] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [newProduct, setNewProduct] = useState({
     name: '',
     category: '',
@@ -14,7 +16,6 @@ const SellerPage = () => {
     ageMonths: '',
     ageDays: '',
     description: '',
-    contact: '',
     location: '',
     availableTill: '',
     condition: '',
@@ -26,14 +27,12 @@ const SellerPage = () => {
       try {
         const fetchedProducts = await getProductsBySeller();
         setProducts(fetchedProducts);
-
       } catch (error) {
         console.error('Error fetching products:', error);
       }
     };
     fetchProducts();
   }, []);
-
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -50,18 +49,28 @@ const SellerPage = () => {
     });
   };
 
-  const handleAddProduct = async (e) => {
+  const handleAddOrUpdateProduct = async (e) => {
     e.preventDefault();
 
-    const productData = {
-      ...newProduct,
-    };
+    const productData = { ...newProduct };
 
     try {
-      const addedProduct = await addProduct(productData);
-      setProducts([...products, addedProduct]);
-      setShowForm(false);
+      if (selectedProduct) {
+        // If editing an existing product, update it
+        const updatedProduct = await updateProduct(selectedProduct._id, productData);
+        setProducts(
+          products.map((product) =>
+            product._id === selectedProduct._id ? updatedProduct : product
+          )
+        );
+        setSelectedProduct(null); // Clear selected product after updating
+      } else {
+        // If adding a new product, add it
+        const addedProduct = await addProduct(productData);
+        setProducts([...products, addedProduct]);
+      }
 
+      setShowForm(false);
       setNewProduct({
         name: '',
         category: '',
@@ -71,16 +80,26 @@ const SellerPage = () => {
         ageMonths: '',
         ageDays: '',
         description: '',
-        contact: '',
         location: '',
         availableTill: '',
         condition: '',
         image: null,
       });
     } catch (error) {
-      console.error('Error adding product:', error);
-      alert('Failed to add product. Please check the input data.');
+      console.error('Error adding/updating product:', error);
+      alert('Failed to add/update product. Please check the input data.');
     }
+  };
+
+  const handleEditProduct = (product) => {
+    setSelectedProduct(product);
+    setNewProduct({
+      ...product,
+      category: product.category || '',
+      condition: product.condition || '',
+      location: product.location || '',
+    });
+    setShowForm(true);
   };
 
   return (
@@ -90,46 +109,64 @@ const SellerPage = () => {
         <Button variant="primary" onClick={() => setShowForm(true)}>
           Add Product
         </Button>
-      </div>
-
+        </div>
 
       <Row>
         {products.map((product) => (
-          <Col md={4} sm={6} className="mb-4" key={product._id}>
+          <Col md={6} className="mb-4" key={product._id}>
             <Card className="h-100 shadow-sm">
               <Card.Body>
-                {product.imageUrl && (
-                  <img src={product.imageUrl} alt={product.name} style={{ width: '100%', height: 'auto' }} />
-                )}
+                <Row>
+                  {/* Image Column */}
+                  <Col md={4} sm={12}>
+                    {product.imageUrl && (
+                      <img
+                        src={product.imageUrl}
+                        alt={product.name}
+                        style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
+                      />
+                    )}
+                  </Col>
 
-                <Card.Title>{product.name}</Card.Title>
-                <Card.Text>Category: {product.category}</Card.Text>
-                <Card.Text>Price: ${product.price}</Card.Text>
-                <Card.Text>Negotiable: {product.negotiable ? 'Yes' : 'No'}</Card.Text>
-                <Card.Text>Age: {product.age}</Card.Text>
-                <Card.Text>Description: {product.description}</Card.Text>
-                <Card.Text>Contact: {product.contact}</Card.Text>
-                <Card.Text>Location: {product.location}</Card.Text>
-                <Card.Text>Available Till: {product.availableTill}</Card.Text>
+                  {/* Details Column */}
+                  <Col md={8} sm={12}>
+                    <Card.Title>{product.name}</Card.Title>
+                    <Card.Text>Category: {product.category}</Card.Text>
+                    <Card.Text>Price: ${product.price}</Card.Text>
+                    <Card.Text>Negotiable: {product.negotiable ? 'Yes' : 'No'}</Card.Text>
+                    <Card.Text>Age: {product.age}</Card.Text>
+                    <Card.Text>Description: {product.description}</Card.Text>
+                    <Card.Text>Location: {product.location}</Card.Text>
+                    <Card.Text>Available Till: {product.availableTill}</Card.Text>
 
-                <Button variant="primary">Edit Product</Button>
+                    <Button variant="primary" style={{ marginRight: '20px' }} onClick={() => handleEditProduct(product)}>
+                      Edit
+                    </Button>
+                    <Button variant="success" style={{ marginRight: '20px' }}>
+                      Sold
+                    </Button>
+                    <Button variant="danger" style={{ marginRight: '20px' }}>
+                      Delete
+                    </Button>
+                  </Col>
+                </Row>
               </Card.Body>
             </Card>
           </Col>
         ))}
       </Row>
 
-
-      {/* Add Product Modal */}
-      <Modal show={showForm} onHide={() => setShowForm(false)} size="lg">
+      {/* Add/Update Product Modal */}
+      <Modal show={showForm} onHide={() => setShowForm(false)} size="lg" centered>
         <Modal.Header closeButton>
-          <Modal.Title>Add a New Product</Modal.Title>
+          <Modal.Title>{selectedProduct ? 'Edit Product' : 'Add a New Product'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form onSubmit={handleAddProduct}>
-            <Row>
-              <Col md={6}>
-                <Form.Group className="mb-3">
+          <Form onSubmit={handleAddOrUpdateProduct}>
+            {/* Product Name and Category */}
+            <Row className="mb-3">
+              <Col md={4}>
+                <Form.Group>
                   <Form.Label>Product Name</Form.Label>
                   <Form.Control
                     type="text"
@@ -141,23 +178,43 @@ const SellerPage = () => {
                   />
                 </Form.Group>
               </Col>
-              <Col md={6}>
-                <Form.Group className="mb-3">
+              <Col md={4}>
+                <Form.Group>
                   <Form.Label>Category</Form.Label>
-                  <Form.Control
-                    type="text"
+                  <Form.Select
                     name="category"
                     value={newProduct.category}
                     onChange={handleChange}
-                    placeholder="Enter category"
+                    required
+                  >
+                    <option value="">Select Category</option>
+                    {CATEGORY_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+              <Col md={4}>
+                <Form.Group>
+                  <Form.Label>Price</Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="price"
+                    value={newProduct.price}
+                    onChange={handleChange}
+                    placeholder="Enter price"
                     required
                   />
                 </Form.Group>
               </Col>
             </Row>
-            <Row>
-              <Col md={12}>
-                <Form.Group className="mb-3">
+
+            {/* Description and Negotiable */}
+            <Row className="mb-3">
+              <Col md={6}>
+                <Form.Group>
                   <Form.Label>Description</Form.Label>
                   <Form.Control
                     as="textarea"
@@ -170,23 +227,8 @@ const SellerPage = () => {
                   />
                 </Form.Group>
               </Col>
-            </Row>
-            <Row>
               <Col md={6}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Price</Form.Label>
-                  <Form.Control
-                    type="number"
-                    name="price"
-                    value={newProduct.price}
-                    onChange={handleChange}
-                    placeholder="Enter price"
-                    required
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group className="mb-3">
+                <Form.Group>
                   <Form.Label>Negotiable</Form.Label>
                   <Form.Check
                     type="checkbox"
@@ -198,9 +240,11 @@ const SellerPage = () => {
                 </Form.Group>
               </Col>
             </Row>
-            <Row>
+
+            {/* Age Fields */}
+            <Row className="mb-3">
               <Col md={4}>
-                <Form.Group className="mb-3">
+                <Form.Group>
                   <Form.Label>Age (Years)</Form.Label>
                   <Form.Control
                     type="number"
@@ -212,7 +256,7 @@ const SellerPage = () => {
                 </Form.Group>
               </Col>
               <Col md={4}>
-                <Form.Group className="mb-3">
+                <Form.Group>
                   <Form.Label>Age (Months)</Form.Label>
                   <Form.Control
                     type="number"
@@ -224,7 +268,7 @@ const SellerPage = () => {
                 </Form.Group>
               </Col>
               <Col md={4}>
-                <Form.Group className="mb-3">
+                <Form.Group>
                   <Form.Label>Age (Days)</Form.Label>
                   <Form.Control
                     type="number"
@@ -236,24 +280,29 @@ const SellerPage = () => {
                 </Form.Group>
               </Col>
             </Row>
-            <Row>
-              <Col md={6}>
-                <Form.Group className="mb-3">
+
+            {/* Condition, Available Till, and Location */}
+            <Row className="mb-3">
+              <Col md={4}>
+                <Form.Group>
                   <Form.Label>Condition</Form.Label>
-                  <Form.Control
-                    type="text"
+                  <Form.Select
                     name="condition"
                     value={newProduct.condition}
                     onChange={handleChange}
-                    placeholder="Enter condition"
                     required
-                  />
+                  >
+                    <option value="">Select Condition</option>
+                    {CONDITION_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </Form.Select>
                 </Form.Group>
               </Col>
-            </Row>
-            <Row>
-              <Col md={6}>
-                <Form.Group className="mb-3">
+              <Col md={4}>
+                <Form.Group>
                   <Form.Label>Available Till</Form.Label>
                   <Form.Control
                     type="date"
@@ -264,39 +313,30 @@ const SellerPage = () => {
                   />
                 </Form.Group>
               </Col>
-              <Col md={6}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Contact Info</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="contact"
-                    value={newProduct.contact}
-                    onChange={handleChange}
-                    placeholder="Enter contact info"
-                    required
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={12}>
-                <Form.Group className="mb-3">
+              <Col md={4}>
+                <Form.Group>
                   <Form.Label>Location</Form.Label>
-                  <Form.Control
-                    type="text"
+                  <Form.Select
                     name="location"
                     value={newProduct.location}
                     onChange={handleChange}
-                    placeholder="Enter location"
                     required
-                  />
+                  >
+                    <option value="">Select Location</option>
+                    {RESIDENCE_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </Form.Select>
                 </Form.Group>
               </Col>
             </Row>
 
-            <Row>
-              <Col md={12}>
-                <Form.Group className="mb-3">
+            {/* Image Upload */}
+            <Row className="mb-3">
+              <Col md={6}>
+                <Form.Group>
                   <Form.Label>Upload Image</Form.Label>
                   <Form.Control
                     type="file"
@@ -308,13 +348,13 @@ const SellerPage = () => {
               </Col>
             </Row>
 
-            <Button variant="success" type="submit">
-              Add Product
+            {/* Submit Button */}
+            <Button variant="success" type="submit" block>
+              {selectedProduct ? 'Update Product' : 'Add Product'}
             </Button>
           </Form>
         </Modal.Body>
       </Modal>
-
     </Container>
   );
 };

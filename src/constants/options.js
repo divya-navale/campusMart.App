@@ -22,14 +22,6 @@ export const CONDITION_OPTIONS = [
     { label: "Poor", value: "poor" }
 ];
 
-export const USAGE_OPTIONS = [
-    { label: "Never Used", value: "never-used" },
-    { label: "Used Once", value: "used-once" },
-    { label: "Light Usage", value: "light-usage" },
-    { label: "Normal Usage", value: "normal-usage" },
-    { label: "Heavy Usage", value: "heavy-usage" }
-];
-
 export const AGE_OPTIONS = [
     { label: "Brand New", value: "brand-new" },
     { label: "0-1 month", value: "0-1month" },

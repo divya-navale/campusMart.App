@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import Logo from './components/common/Logo';
@@ -27,6 +27,22 @@ const Layout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const userRole = localStorage.getItem('userRole');
+    
+    if (userRole) {
+      if (
+        (userRole === 'buyer' && (location.pathname === '/' || location.pathname === '/login' || location.pathname === '/signup')) 
+      ) {
+        navigate('/buyer-dashboard');
+      } else if (
+        userRole === 'seller' && (location.pathname === '/' || location.pathname === '/login' || location.pathname === '/signup')
+      ) {
+        navigate('/seller-dashboard');
+      }
+    }
+  }, [location.pathname, navigate]);  
+
   // Check if the current page is the product detail page
   const isProductPage = location.pathname.startsWith("/product/");
 
@@ -37,6 +53,7 @@ const Layout = ({ children }) => {
     "/forgot-password",
     "/choose-role",
     "/session-expired",
+    "/"
   ].includes(location.pathname);
 
   // Define routes where Logo should be hidden

@@ -18,6 +18,7 @@ import RequestProduct from './pages/buyer/RequestProduct';
 import Verification from './pages/common/Verification';
 import Notifications from './pages/common/Notifications';
 import Wishlist from './pages/common/Wishlist';
+import SessionExpired from './pages/common/SessionExpired';
 
 import './App.css';
 import UpdatePassword from './pages/common/UpdatePassword';
@@ -35,6 +36,7 @@ const Layout = ({ children }) => {
     "/signup",
     "/forgot-password",
     "/choose-role",
+    "/session-expired",
   ].includes(location.pathname);
 
   // Define routes where Logo should be hidden
@@ -114,10 +116,7 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/choose-role" element={<BuyerSellerChoice />} />
-            <Route
-              path="/"
-              element={localStorage.getItem('token') ? <BuyerSellerChoice /> : <Login />}
-            />
+            <Route path="/" element={ <Login />}/>
             <Route path="/verify" element={<Verification />} />
             
             {/* Product Details page */}
@@ -132,6 +131,7 @@ function App() {
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/profile" element={<BuyerProfile />} />
             <Route path="/update-password" element={<UpdatePassword />} />
+            <Route path="/session-expired" element={<SessionExpired />} />
           </Routes>
         </Layout>
         <Footer />

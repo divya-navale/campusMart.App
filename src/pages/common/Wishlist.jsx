@@ -3,7 +3,7 @@ import { getWishlistProducts, removeFromWishlist, fetchUserDetails, createNotifi
 import { Container, Row, Col, Card, Button, Modal } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { FaTrashAlt, FaEnvelope } from 'react-icons/fa';
+import { FaTrashAlt, FaCommentDots } from 'react-icons/fa';
 import gif from './../../assets/emptycart.gif';
 
 const WishlistPage = () => {
@@ -160,7 +160,7 @@ const WishlistPage = () => {
                       title={'Remove from Wishlist'}
                       style={{ cursor: 'pointer' }}
                     />
-                    <FaEnvelope
+                    <FaCommentDots
                       size={20}
                       color="#007bff"
                       className="contact-icon ms-3"

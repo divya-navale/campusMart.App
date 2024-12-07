@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { Form, Button, Container, Row, Col, Card } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Form, Button, Container, Row, Col, Card, ListGroup, Alert } from 'react-bootstrap';
 import { MdProductionQuantityLimits } from "react-icons/md";
 import './../../styles/style.css';
+import { submitProductRequest, getUserProductRequests, deleteProductRequest } from '../../services/api';
+import { FaTrashAlt } from 'react-icons/fa';
 
 const RequestProduct = () => {
   const [formData, setFormData] = useState({
@@ -11,20 +13,41 @@ const RequestProduct = () => {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [requestedProducts, setRequestedProducts] = useState([]);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  // Fetch requested products
+  useEffect(() => {
+    const fetchRequestedProducts = async () => {
+      try {
+        const response = await getUserProductRequests();  // API to fetch requested products
+        setRequestedProducts(response);
+      } catch (error) {
+        console.error('Error fetching requested products:', error.message);
+        setErrorMessage('Failed to load requested products');
+      }
+    };
+
+    fetchRequestedProducts();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form Submitted:', formData);
-    setSubmitted(true);
+    try {
+      const response = await submitProductRequest(formData);
+      setRequestedProducts((prevState) => [...prevState, response]);
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Failed to submit product request:', error.message);
+    }
   };
 
   const handleReset = () => {
-    // Reset the form data and submission state
     setFormData({
       productName: '',
       productCategory: '',
@@ -33,10 +56,55 @@ const RequestProduct = () => {
     setSubmitted(false);
   };
 
+  const handleDelete = async (productId) => {
+    try {
+      await deleteProductRequest(productId);  // API call to delete the product
+      setRequestedProducts(requestedProducts.filter(product => product._id !== productId));
+    } catch (error) {
+      console.error('Failed to delete product:', error.message);
+      setErrorMessage('Failed to delete product');
+    }
+  };
+
   return (
     <Container className="py-5">
       <Row className="justify-content-center">
-        <Col md={8}>
+        {/* Left Side: Requested Products */}
+        <Col md={6}>
+          <Card className="shadow-lg p-4">
+            <Card.Body>
+              <h2 className="mb-3 text-center">Your Requested Products</h2>
+              {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
+              <ListGroup className="scrollable-list" style={{ maxHeight: '500px', overflowY: 'auto', border: '1px solid #ddd', padding: '10px', borderRadius: '5px' }}>
+                {requestedProducts.length === 0 ? (
+                  <ListGroup.Item>No requested products yet.</ListGroup.Item>
+                ) : (
+                  requestedProducts.map((product, index) => (
+                    <ListGroup.Item key={index} className="d-flex justify-content-between align-items-center">
+                      <div>
+                        <strong>{product.productName}</strong>
+                        <br />
+                        <em>{product.productCategory}</em>
+                        <p>{product.description}</p>
+                      </div>
+                      <FaTrashAlt
+                      size={20}
+                      color='#e63946'
+                      className="wishlist-icon ms-2"
+                      onClick={() => handleDelete(product._id)}
+                      title={'Remove from requests'}
+                      style={{ cursor: 'pointer' }}
+                    />
+                    </ListGroup.Item>
+                  ))
+                )}
+              </ListGroup>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        {/* Right Side: Product Request Form */}
+        <Col md={6}>
           <Card className="shadow-lg p-4">
             <Card.Body>
               <div className="text-center mb-4">

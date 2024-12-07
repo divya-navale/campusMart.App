@@ -75,17 +75,17 @@ const NavbarComponent = () => {
           className="justify-content-between"
         >
           {!shouldHideSearchBar && (
-           <Form className="d-flex mx-auto search-bar-container">
-           <FormControl
-             type="text"
-             placeholder="Search products..."
-             className="search-input"
-           />
-           {/* Removed the search icon */}
-           <Button variant="light" className="search-button">
-           </Button>
-         </Form>
-         
+            <Form className="d-flex mx-auto search-bar-container">
+              <FormControl
+                type="text"
+                placeholder="Search products..."
+                className="search-input"
+              />
+              {/* Removed the search icon */}
+              <Button variant="light" className="search-button">
+              </Button>
+            </Form>
+
           )}
 
           <Nav className="ms-auto align-items-center">
@@ -115,28 +115,32 @@ const NavbarComponent = () => {
 
             {
               localStorage.getItem("userRole") === 'buyer' && (
-                <><OverlayTrigger
-                  placement="bottom"
-                  overlay={renderTooltip("Wishlist")}
-                >
-                  <Nav.Link
-                    onClick={() => navigate("/wishlist")}
-                    className="d-flex flex-column align-items-center mx-2 nav-icon-container"
+                <>
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={renderTooltip("Wishlist")}
                   >
-                    <FaHeart className="nav-link-icon" />
-                  </Nav.Link>
-                </OverlayTrigger><OverlayTrigger
-                  placement="bottom"
-                  overlay={renderTooltip("Request Product")}
-                >
+                    <Nav.Link
+                      onClick={() => navigate("/wishlist")}
+                      className="d-flex flex-column align-items-center mx-2 nav-icon-container"
+                    >
+                      <FaHeart className="nav-link-icon" />
+                    </Nav.Link>
+                  </OverlayTrigger>
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={renderTooltip("Request Product")}
+                  >
                     <Nav.Link
                       onClick={() => navigate("/request-product")}
                       className="d-flex flex-column align-items-center mx-2 nav-icon-container"
                     >
                       <FaBoxOpen className="nav-link-icon" />
                     </Nav.Link>
-                  </OverlayTrigger></>
-              ) 
+                  </OverlayTrigger>
+                </>
+
+              )
             }
             <OverlayTrigger
               placement="bottom"

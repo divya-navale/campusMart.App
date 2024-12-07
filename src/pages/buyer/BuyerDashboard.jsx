@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { fetchProducts, addToWishlist, removeFromWishlist, getWishlist, fetchUserDetails, createNotification } from './../../services/api';
 import { Container, Row, Col, Card, Button, Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { FaHeart, FaEnvelope } from 'react-icons/fa';
+import { FaHeart, FaCommentDots } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../styles/buyerDashboard.css';
@@ -137,7 +137,7 @@ const BuyerDashboard = () => {
                       title={wishlist.includes(product._id) ? 'Remove from Wishlist' : 'Add to Wishlist'}
                       style={{ cursor: 'pointer' }}
                     />
-                    <FaEnvelope
+                    <FaCommentDots
                       size={18}
                       color="#007bff"
                       className="contact-icon ms-3"

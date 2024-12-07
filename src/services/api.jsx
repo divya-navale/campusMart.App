@@ -290,3 +290,43 @@ const parseJwt = (token) => {
 export const updateProduct = (id, productData) => {
   
 }
+
+export const submitProductRequest = async (productData) => {
+  try {
+    productData.userId = getUserIdFromToken();
+    const response = await api.post('/api/request-product', productData);
+    return response.data;
+  } catch (error) {
+    throw new Error('Error submitting product request');
+  }
+};
+
+export const getUserProductRequests = async () => {
+  try {
+    const userId = getUserIdFromToken();
+    const response = await api.get(`/api/request-product?userId=${userId}`);  // Pass userId as a query parameter
+    return response.data;
+  } catch (error) {
+    throw new Error('Error fetching product requests');
+  }
+};
+
+
+export const getAllRequestedProducts = async () => {
+  try {
+    const response = await api.get('/api/all-requested-products');
+    return response.data;
+  } catch (error) {
+    throw new Error('Error fetching all product requests');
+  }
+};
+
+export const deleteProductRequest = async (productId) => {
+  try {
+
+    const response = await api.delete(`/api/request-product/${productId}`);
+    return response.data; 
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};

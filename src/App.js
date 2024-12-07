@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import Logo from './components/common/Logo';
@@ -26,8 +26,25 @@ const Layout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Add condition to hide search bar on product detail page
+  // Check if the current page is the product detail page
   const isProductPage = location.pathname.startsWith("/product/");
+
+  // Define routes where Navbar should be hidden
+  const shouldHideNavbar = [
+    "/login",
+    "/signup",
+    "/forgot-password",
+    "/choose-role",
+  ].includes(location.pathname);
+
+  // Define routes where Logo should be hidden
+  const shouldHideLogo = [
+    "/request-product",
+    "/profile",
+    "/wishlist",
+    "/notifications",
+    "/seller-dashboard"
+  ].includes(location.pathname);
 
   const isBuyerRoute =
     location.pathname.startsWith("/buyer-dashboard") ||
@@ -37,14 +54,6 @@ const Layout = ({ children }) => {
   const isSellerRoute =
     location.pathname.startsWith("/seller-dashboard") ||
     location.pathname === "/seller-profile";
-
-  const shouldShowNavbar =
-    location.pathname === "/notifications" ||
-    location.pathname === "/profile" ||
-    location.pathname === "/wishlist" ||
-    isBuyerRoute ||
-    isSellerRoute ||
-    location.pathname === "/request-product";
 
   // Logo click handler for redirecting to respective dashboard based on role
   const handleLogoClick = () => {
@@ -62,44 +71,38 @@ const Layout = ({ children }) => {
   return (
     <>
       {/* Conditionally render the Navbar */}
-      <NavbarComponent showSearchBar={!isProductPage} /> {/* Hide search bar on product page */}
+      {!shouldHideNavbar && <NavbarComponent showSearchBar={!isProductPage} />}
 
-      {/* Buyer Header Layout (including product details page) */}
-      {isBuyerRoute && location.pathname !== "/buyer-profile" && (
+      {/* Show Logo on authentication pages */}
+      {shouldHideNavbar && (
+        <Logo onLogoClick={canClickLogo ? handleLogoClick : null} />
+      )}
+
+      {/* Render BuyerHeader for buyer routes, excluding product detail and profile pages */}
+      {isBuyerRoute && location.pathname !== "/buyer-profile" && !isProductPage && (
         <div className="d-flex">
-          <BuyerHeader showSearchBar={location.pathname !== "/product/:productId"} />
+          <BuyerHeader showSearchBar={true} />
           <div className="flex-grow-1">{children}</div>
         </div>
       )}
 
-      {/* Seller Header Layout */}
-      {isSellerRoute && (
-        <div className="d-flex">
-          <div className="flex-grow-1">{children}</div>
-        </div>
-      )}
-
-      {/* Default Layout without Header */}
-      {!isBuyerRoute && !isSellerRoute && !shouldShowNavbar && (
+      {/* Fallback rendering for all other routes */}
+      {(!isBuyerRoute || location.pathname === "/buyer-profile") && !isProductPage && (
         <>
-          <Logo onLogoClick={canClickLogo ? handleLogoClick : null} />
+          {!shouldHideNavbar && !shouldHideLogo && location.pathname !== "/buyer-profile" && (
+            <Logo onLogoClick={canClickLogo ? handleLogoClick : null} />
+          )}
           <div className="flex-grow-1">{children}</div>
         </>
       )}
 
-      {/* Layout for routes with navbar but no header */}
-      {shouldShowNavbar && !isBuyerRoute && !isSellerRoute && (
-        <div className="flex-grow-1">{children}</div>
-      )}
-
-      {/* Layout for buyer profile without header */}
-      {location.pathname === "/buyer-profile" && (
+      {/* Direct rendering for product details page */}
+      {isProductPage && (
         <div className="flex-grow-1">{children}</div>
       )}
     </>
   );
 };
-
 
 function App() {
   return (
@@ -116,7 +119,10 @@ function App() {
               element={localStorage.getItem('token') ? <BuyerSellerChoice /> : <Login />}
             />
             <Route path="/verify" element={<Verification />} />
+            
+            {/* Product Details page */}
             <Route path="/product/:productId" element={<ProductDetail />} />
+
             <Route path="/buyer-dashboard" element={<BuyerDashboard />} />
             <Route path="/buyer-profile" element={<BuyerProfile />} />
             <Route path="/request-product" element={<RequestProduct />} />
@@ -135,4 +141,3 @@ function App() {
 }
 
 export default App;
-

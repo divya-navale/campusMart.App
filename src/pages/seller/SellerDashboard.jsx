@@ -51,25 +51,27 @@ const SellerPage = () => {
 
   const handleAddOrUpdateProduct = async (e) => {
     e.preventDefault();
-
-    const productData = { ...newProduct };
-
+  
+    const productData = {
+      ...newProduct,
+      availableTill: newProduct.availableTill
+        ? new Date(newProduct.availableTill).toISOString()
+        : '', // Convert to ISO format before sending to backend
+    };
+  
     try {
       if (selectedProduct) {
-        // If editing an existing product, update it
         const updatedProduct = await updateProduct(selectedProduct._id, productData);
         setProducts(
           products.map((product) =>
             product._id === selectedProduct._id ? updatedProduct : product
           )
         );
-        setSelectedProduct(null); // Clear selected product after updating
       } else {
-        // If adding a new product, add it
         const addedProduct = await addProduct(productData);
         setProducts([...products, addedProduct]);
       }
-
+  
       setShowForm(false);
       setNewProduct({
         name: '',
@@ -90,17 +92,25 @@ const SellerPage = () => {
       alert('Failed to add/update product. Please check the input data.');
     }
   };
-
+  
   const handleEditProduct = (product) => {
     setSelectedProduct(product);
+  
+    // Format the availableTill date to 'YYYY-MM-DD' format for the input field
+    const formattedAvailableTill = product.availableTill
+      ? new Date(product.availableTill).toISOString().split('T')[0]
+      : '';
+  
     setNewProduct({
       ...product,
       category: product.category || '',
       condition: product.condition || '',
       location: product.location || '',
+      availableTill: formattedAvailableTill, // Use the formatted date
     });
     setShowForm(true);
   };
+  
 
   return (
     <Container className="mt-5">

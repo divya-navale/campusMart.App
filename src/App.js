@@ -53,7 +53,8 @@ const Layout = ({ children }) => {
     "/forgot-password",
     "/choose-role",
     "/session-expired",
-    "/"
+    "/",
+    "/verify"
   ].includes(location.pathname);
 
   // Define routes where Logo should be hidden
@@ -139,7 +140,7 @@ function App() {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
-  
+
   return (
     <Router>
       <div className="app d-flex flex-column min-vh-100">

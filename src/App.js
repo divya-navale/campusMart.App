@@ -124,6 +124,22 @@ const Layout = ({ children }) => {
 };
 
 function App() {
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userRole');
+      console.log("Browser is being closed or refreshed!");
+      event.preventDefault();
+      event.returnValue = '';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+  
   return (
     <Router>
       <div className="app d-flex flex-column min-vh-100">

@@ -13,7 +13,6 @@ import BuyerProfile from './pages/buyer/BuyerProfile';
 import SellerProfile from './pages/seller/SellerProfile';
 import NavbarComponent from './components/common/NavbarComponent';
 import BuyerHeader from './components/buyer/BuyerHeader';
-import SellerHeader from './components/seller/SellerHeader';
 import ProductDetail from './pages/buyer/ProductDetails';
 import RequestProduct from './pages/buyer/RequestProduct';
 import Verification from './pages/common/Verification';
@@ -69,14 +68,6 @@ const Layout = ({ children }) => {
       {isBuyerRoute && location.pathname !== "/buyer-profile" && (
         <div className="d-flex">
           <BuyerHeader />
-          <div className="flex-grow-1">{children}</div>
-        </div>
-      )}
-
-      {/* Seller Header Layout */}
-      {isSellerRoute && (
-        <div className="d-flex">
-          <SellerHeader />
           <div className="flex-grow-1">{children}</div>
         </div>
       )}

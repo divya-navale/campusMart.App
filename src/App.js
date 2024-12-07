@@ -72,6 +72,13 @@ const Layout = ({ children }) => {
         </div>
       )}
 
+      {/* Seller Header Layout */}
+      {isSellerRoute && (
+        <div className="d-flex">
+          <div className="flex-grow-1">{children}</div>
+        </div>
+      )}
+
       {/* Default Layout without Header */}
       {!isBuyerRoute && !isSellerRoute && !shouldShowNavbar && (
         <>

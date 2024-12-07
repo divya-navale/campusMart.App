@@ -14,7 +14,7 @@ const ForgotPassword = () => {
     try {
       const response = await getUserByEmail(email);
       console.log(response);
-      const otpResponse = await sendOtp(email);
+      const otpResponse = await sendOtp(email, "forgot-password");
       if (otpResponse.status == 200) {
         console.log("OTP sent to your email address");
       }

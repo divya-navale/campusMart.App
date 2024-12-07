@@ -54,7 +54,8 @@ const Layout = ({ children }) => {
     "/choose-role",
     "/session-expired",
     "/",
-    "/verify"
+    "/verify",
+    "/update-password"
   ].includes(location.pathname);
 
   // Define routes where Logo should be hidden
@@ -63,7 +64,7 @@ const Layout = ({ children }) => {
     "/profile",
     "/wishlist",
     "/notifications",
-    "/seller-dashboard"
+    "/seller-dashboard",
   ].includes(location.pathname);
 
   const isBuyerRoute =
@@ -125,22 +126,6 @@ const Layout = ({ children }) => {
 };
 
 function App() {
-  useEffect(() => {
-    const handleBeforeUnload = (event) => {
-      localStorage.removeItem('token');
-      localStorage.removeItem('userRole');
-      console.log("Browser is being closed or refreshed!");
-      event.preventDefault();
-      event.returnValue = '';
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, []);
-
   return (
     <Router>
       <div className="app d-flex flex-column min-vh-100">

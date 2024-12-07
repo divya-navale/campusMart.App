@@ -52,7 +52,7 @@ const Verification = () => {
         setError('');
 
         try {
-            const response = await sendOtp(email);
+            const response = await sendOtp(email, source);
             if (response.status == 200) {
                 setResendMessage('OTP has been sent again to your email.');
             } else {

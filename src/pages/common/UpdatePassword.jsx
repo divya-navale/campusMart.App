@@ -25,7 +25,7 @@ const UpdatePassword = () => {
 
     try {
       const response = await updatePassword(email, newPassword);
-      if (response.success) {
+      if (response.status == 200) {
         setSuccess(true);
         setTimeout(() => {
           navigate('/login');
@@ -42,8 +42,6 @@ const UpdatePassword = () => {
         <Col md={6}>
           <h2 className="text-center">Update Password</h2>
           <Form onSubmit={handleUpdatePassword}>
-            {error && <Alert variant="danger">{error}</Alert>}
-            {success && <Alert variant="success">Password updated successfully!</Alert>}
             <Form.Group controlId="newPassword" className="mb-3">
               <Form.Label>New Password</Form.Label>
               <Form.Control
@@ -67,6 +65,9 @@ const UpdatePassword = () => {
             <Button variant="primary" type="submit" className="w-100">
               Update Password
             </Button>
+            {error && <Alert variant="danger" style={{ "marginTop": "20px" }}>{error}</Alert>}
+            {success && <Alert variant="success" style={{ "marginTop": "20px" }}>Password updated successfully!</Alert>}
+
           </Form>
         </Col>
       </Row>

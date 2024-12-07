@@ -5,7 +5,7 @@ export const signupUser = async (name, email, password, location) => {
     const response = await api.post(`/api/users`, { name, email, password, location });
 
     if (response.status === 201) {
-      const otpResponse = await sendOtp(email);
+      const otpResponse = await sendOtp(email, "signup");
       if (otpResponse.status === 200) {
         console.log("OTP sent to email:", email);
       }
@@ -110,9 +110,9 @@ export const verifyOtp = async (email, otp) => {
   }
 };
 
-export const sendOtp = async (email) => {
+export const sendOtp = async (email, source) => {
   try {
-    const response = await api.post(`/api/otp/send-otp`, { email });
+    const response = await api.post(`/api/otp/send-otp`, { email, source });
     console.log("OTP sent successfully", response.data);
     return response.data;
   } catch (error) {
@@ -210,8 +210,8 @@ export const getUserByEmail = async (email) => {
 
 export const updatePassword = async (email, password) => {
   try {
-    const response = await api.post('/api/users/update-password', { email, password });
-    return response.data;
+    const response = await api.post(`/api/update-password`, { email, password });
+    return response;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Error updating password');
   }

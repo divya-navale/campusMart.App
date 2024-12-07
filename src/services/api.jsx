@@ -251,11 +251,9 @@ export const getUserDetails = async () => {
 };
 
 //send notification 
-export const createNotification = async (sellerId, productId) => {
+export const createNotification = async (sellerId, productId, message) => {
   const buyerId = getUserIdFromToken();
   try {
-    const message = `Buyer with ID: ${buyerId} is interested in your product with ID: ${productId}.`;
-
     const response = await api.post('/api/notifications', {
       buyerId,
       sellerId,

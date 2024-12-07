@@ -7,7 +7,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../styles/buyerDashboard.css';
 
-
 const BuyerDashboard = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
@@ -16,9 +15,7 @@ const BuyerDashboard = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [sellerDetails, setSellerDetails] = useState(null);
   const [loadingSeller, setLoadingSeller] = useState(false);
-
-
-
+  const [message, setMessage] = useState('');  // State to hold the message
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,11 +25,9 @@ const BuyerDashboard = () => {
         const wishlistData = await getWishlist();
         if (wishlistData.message && wishlistData.message === 'No wishlisted products for this user') {
           console.log('No wishlisted products for this user');
-        }
-        else {
+        } else {
           const userWishlist = wishlistData.wishlist.products.map((product) => product._id);
           setWishlist(userWishlist);
-
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -98,12 +93,16 @@ const BuyerDashboard = () => {
     setShowModal(false);
     setSelectedProduct(null);
     setSellerDetails(null);
+    setMessage(''); // Reset message when modal is closed
   };
 
   const handleSendNotification = async () => {
     try {
-      const notificationData = await createNotification(selectedProduct.sellerId, selectedProduct._id);
-
+      if (!message.trim()) {
+        toast.error('Please enter a message before sending!', { position: 'top-center' });
+        return;
+      }
+      const notificationData = await createNotification(selectedProduct.sellerId, selectedProduct._id, message);
       toast.success('Notification sent successfully to Seller!', { position: 'top-center' });
       handleCloseModal();
     } catch (error) {
@@ -169,6 +168,18 @@ const BuyerDashboard = () => {
                 <tr>
                   <td className="label">Email:</td>
                   <td className="value">{sellerDetails.email}</td>
+                </tr>
+                <tr>
+                  <td className="label">Message:</td>
+                  <td className="value">
+                    <textarea
+                      className="form-control"
+                      rows="4"
+                      placeholder="Enter your message here"
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)} // Capture message input
+                    />
+                  </td>
                 </tr>
               </tbody>
             </table>

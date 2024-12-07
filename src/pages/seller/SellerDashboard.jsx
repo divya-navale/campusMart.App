@@ -109,7 +109,7 @@ const SellerPage = () => {
         <Button variant="primary" onClick={() => setShowForm(true)}>
           Add Product
         </Button>
-        </div>
+      </div>
 
       <Row>
         {products.map((product) => (
@@ -117,7 +117,6 @@ const SellerPage = () => {
             <Card className="h-100 shadow-sm">
               <Card.Body>
                 <Row>
-                  {/* Image Column */}
                   <Col md={4} sm={12}>
                     {product.imageUrl && (
                       <img
@@ -128,26 +127,25 @@ const SellerPage = () => {
                     )}
                   </Col>
 
-                  {/* Details Column */}
                   <Col md={8} sm={12}>
                     <Card.Title>{product.name}</Card.Title>
                     <Card.Text>Category: {product.category}</Card.Text>
                     <Card.Text>Price: ${product.price}</Card.Text>
                     <Card.Text>Negotiable: {product.negotiable ? 'Yes' : 'No'}</Card.Text>
-                    <Card.Text>Age: {product.age}</Card.Text>
+                    <Card.Text>
+                      Age: {`${product.ageYears || 0} years, ${product.ageMonths || 0} months, ${product.ageDays || 0} days`}
+                    </Card.Text>
                     <Card.Text>Description: {product.description}</Card.Text>
-                    <Card.Text>Location: {product.location}</Card.Text>
-                    <Card.Text>Available Till: {product.availableTill}</Card.Text>
+                    <Card.Text>Location: {product.location || 'N/A'}</Card.Text>
+                    <Card.Text>Available Till: {new Date(product.availableTill).toLocaleDateString()}</Card.Text>
 
-                    <Button variant="primary" style={{ marginRight: '20px' }} onClick={() => handleEditProduct(product)}>
+                    <Button variant="primary" className="me-2" onClick={() => handleEditProduct(product)}>
                       Edit
                     </Button>
-                    <Button variant="success" style={{ marginRight: '20px' }}>
+                    <Button variant="success" className="me-2">
                       Sold
                     </Button>
-                    <Button variant="danger" style={{ marginRight: '20px' }}>
-                      Delete
-                    </Button>
+                    <Button variant="danger">Delete</Button>
                   </Col>
                 </Row>
               </Card.Body>
@@ -156,14 +154,12 @@ const SellerPage = () => {
         ))}
       </Row>
 
-      {/* Add/Update Product Modal */}
       <Modal show={showForm} onHide={() => setShowForm(false)} size="lg" centered>
         <Modal.Header closeButton>
           <Modal.Title>{selectedProduct ? 'Edit Product' : 'Add a New Product'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleAddOrUpdateProduct}>
-            {/* Product Name and Category */}
             <Row className="mb-3">
               <Col md={4}>
                 <Form.Group>
@@ -211,7 +207,6 @@ const SellerPage = () => {
               </Col>
             </Row>
 
-            {/* Description and Negotiable */}
             <Row className="mb-3">
               <Col md={6}>
                 <Form.Group>
@@ -241,7 +236,6 @@ const SellerPage = () => {
               </Col>
             </Row>
 
-            {/* Age Fields */}
             <Row className="mb-3">
               <Col md={4}>
                 <Form.Group>
@@ -281,7 +275,6 @@ const SellerPage = () => {
               </Col>
             </Row>
 
-            {/* Condition, Available Till, and Location */}
             <Row className="mb-3">
               <Col md={4}>
                 <Form.Group>
@@ -324,7 +317,7 @@ const SellerPage = () => {
                   >
                     <option value="">Select Location</option>
                     {RESIDENCE_OPTIONS.map((option) => (
-                      <option key={option.value} value={option.value}>
+                      <option key={option.value} value={option.label}>
                         {option.label}
                       </option>
                     ))}
@@ -333,7 +326,6 @@ const SellerPage = () => {
               </Col>
             </Row>
 
-            {/* Image Upload */}
             <Row className="mb-3">
               <Col md={6}>
                 <Form.Group>
@@ -348,7 +340,6 @@ const SellerPage = () => {
               </Col>
             </Row>
 
-            {/* Submit Button */}
             <Button variant="success" type="submit" block>
               {selectedProduct ? 'Update Product' : 'Add Product'}
             </Button>

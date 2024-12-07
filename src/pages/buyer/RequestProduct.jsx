@@ -23,6 +23,16 @@ const RequestProduct = () => {
     setSubmitted(true);
   };
 
+  const handleReset = () => {
+    // Reset the form data and submission state
+    setFormData({
+      productName: '',
+      productCategory: '',
+      description: '',
+    });
+    setSubmitted(false);
+  };
+
   return (
     <Container className="py-5">
       <Row className="justify-content-center">
@@ -31,11 +41,15 @@ const RequestProduct = () => {
             <Card.Body>
               <div className="text-center mb-4">
                 <MdProductionQuantityLimits size={60} className="text-primary mb-2" />
-                <h2 className="mb-3">Request a Product</h2>
-                <p className="text-muted">
-                  Can't find what you're looking for? Submit a request, and we'll do our best to help!
-                </p>
               </div>
+              {!submitted && (
+                <div className="text-center mb-4">
+                  <h2 className="mb-3">Request a Product</h2>
+                  <p className="text-muted">
+                    Can't find what you're looking for? Submit a request, and we'll do our best to help!
+                  </p>
+                </div>
+              )}
               {!submitted ? (
                 <Form onSubmit={handleSubmit}>
                   <Form.Group className="mb-3" controlId="formProductName">
@@ -72,7 +86,7 @@ const RequestProduct = () => {
                       required
                     />
                   </Form.Group>
-                  <div className="d-grid">
+                  <div className="d-flex justify-content-center mt-4">
                     <Button variant="primary" type="submit">
                       Submit Request
                     </Button>
@@ -84,7 +98,7 @@ const RequestProduct = () => {
                   <p className="text-muted">
                     We have received your product request and will get back to you soon.
                   </p>
-                  <Button variant="outline-primary" onClick={() => setSubmitted(false)}>
+                  <Button variant="outline-primary" onClick={handleReset}>
                     Submit Another Request
                   </Button>
                 </div>

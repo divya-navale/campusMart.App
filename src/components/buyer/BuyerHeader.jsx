@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Card, Badge, Accordion, Button } from 'react-bootstrap';
-import { Home, DollarSign, Package, Clock, Activity, Grid, Filter } from 'lucide-react';
+import { Home, DollarSign, Clock, Activity, Grid, Filter } from 'lucide-react';
 import { RESIDENCE_OPTIONS, PRICE_OPTIONS, CONDITION_OPTIONS,  AGE_OPTIONS, CATEGORY_OPTIONS } from '../../constants/options';
 
 

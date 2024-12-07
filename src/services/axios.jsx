@@ -22,8 +22,8 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      localStorage.removeItem('jwt');
-      localStorage.removeItem('useRole')
+      localStorage.removeItem('token');
+      localStorage.removeItem('userRole')
       window.location.href = '/session-expired';
     }
     return Promise.reject(error);

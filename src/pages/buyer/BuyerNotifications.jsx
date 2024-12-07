@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Container, ListGroup, Alert, Row, Col, Image, Card } from 'react-bootstrap';
-import { getNotifications, getProductDetailsById } from './../../services/api';
+import { getNotifications, getProductDetailsById } from '../../services/api';
 
-const Notifications = () => {
+const BuyerNotifications = () => {
   const [notifications, setNotifications] = useState([]);  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [productDetails, setProductDetails] = useState({});  
+
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
@@ -47,37 +48,33 @@ const Notifications = () => {
             const productId = notification.productId._id;
             const product = productDetails[productId];
 
-  
             if (!product) {
               fetchProductDetails(productId);
             }
 
             return (
-              <Col xs={12} md={6} key={notification._id} className="mb-3">
+              <Col xs={12} key={notification._id} className="mb-3">
                 <Card className="shadow-sm">
                   <Card.Body>
-                    <Row className="mb-3">
-                      <Col xs={12}>
-                        <strong>{notification.message}</strong> 
-                      </Col>
-                    </Row>
-
                     <Row>
-                      <Col xs={4} md={3}>
+                      {/* Product Image Column (larger image) */}
+                      <Col xs={12} md={3} className="d-flex justify-content-center">
                         {product && product.imageUrl && (
                           <Image 
                             src={product.imageUrl} 
                             alt="Product Image" 
                             fluid 
-                            style={{ height: '120px', width: 'auto' }}  
+                            style={{ height: '180px', width: 'auto' }}  // Increased image size
                           />
                         )}
                       </Col>
-                      <Col xs={8} md={9}>
+
+                      {/* Product Description, Seller Details, and Price Column */}
+                      <Col xs={12} md={5}>
                         <Row className="mb-2">
                           <Col xs={12}>
                             <h5>{product ? product.name : 'Loading...'} </h5>
-                            <p><strong>Price:</strong> ${product ? product.price : 'N/A'}</p>
+                            <p><strong>Description:</strong> {product ? product.description : 'N/A'}</p>
                           </Col>
                         </Row>
 
@@ -88,10 +85,21 @@ const Notifications = () => {
                           </Col>
                         </Row>
 
-
-                        <Row>
+                        {/* Price Row */}
+                        <Row className="mb-2">
                           <Col xs={12}>
-                            <p><strong>Description:</strong> {product ? product.description : 'N/A'}</p>
+                            <p><strong>Price:</strong> ${product ? product.price : 'N/A'}</p>
+                          </Col>
+                        </Row>
+                      </Col>
+
+                      {/* Message Column */}
+                      <Col xs={12} md={4} className="d-flex flex-column justify-content-start" 
+                        style={{ backgroundColor: '#f7f7f7', padding: '10px', borderRadius: '8px' }}  // Light background for the message
+                      >
+                        <Row className="mb-2">
+                          <Col xs={12}>
+                            <strong>{notification.message}</strong>  {/* Display the message */}
                           </Col>
                         </Row>
                       </Col>
@@ -109,4 +117,4 @@ const Notifications = () => {
   );
 };
 
-export default Notifications;
+export default BuyerNotifications;

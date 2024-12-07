@@ -150,6 +150,16 @@ export const getProductsBySeller = async () => {
   }
 };
 
+export const getProductDetailsById = async (productId) => {
+  try {
+    const response = await api.get(`/api/products/${productId}`);  
+    return response.data;  
+  } catch (error) {
+    throw new Error('Error fetching product details: ' + error.message);
+  }
+};
+
+
 export const addProduct = async (productData) => {
   const sellerId = getUserIdFromToken();
   try {
@@ -257,6 +267,17 @@ export const createNotification = async (sellerId, productId) => {
   } catch (error) {
     console.error('Error creating notification:', error);
     throw error;
+  }
+};
+
+//getnotification
+export const getNotifications = async (userRole) => {
+  const userId = getUserIdFromToken();
+  try {
+    const response = await api.get(`/api/notifications/${userId}/${userRole}`);
+    return response.data.notifications; 
+  } catch (error) {
+    throw new Error('Error fetching notifications: ' + error.message);
   }
 };
 

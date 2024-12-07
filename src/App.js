@@ -16,9 +16,10 @@ import BuyerHeader from './components/buyer/BuyerHeader';
 import ProductDetail from './pages/buyer/ProductDetails';
 import RequestProduct from './pages/buyer/RequestProduct';
 import Verification from './pages/common/Verification';
-import Notifications from './pages/common/Notifications';
 import Wishlist from './pages/common/Wishlist';
 import SessionExpired from './pages/common/SessionExpired';
+import BuyerNotifications from './pages/buyer/BuyerNotifications';
+import SellerNotifications from './pages/seller/SellerNotifications';
 
 import './App.css';
 import UpdatePassword from './pages/common/UpdatePassword';
@@ -146,7 +147,8 @@ function App() {
             <Route path="/request-product" element={<RequestProduct />} />
             <Route path="/seller-dashboard" element={<SellerDashboard />} />
             <Route path="/seller-profile" element={<SellerProfile />} />
-            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/buyer-notifications" element={<BuyerNotifications />} />
+            <Route path="/seller-notifications" element={<SellerNotifications />} />
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/profile" element={<BuyerProfile />} />
             <Route path="/update-password" element={<UpdatePassword />} />

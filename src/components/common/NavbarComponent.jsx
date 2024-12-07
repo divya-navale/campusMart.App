@@ -106,7 +106,7 @@ const NavbarComponent = () => {
               overlay={renderTooltip("Notifications")}
             >
               <Nav.Link
-                onClick={() => navigate("/notifications")}
+                onClick={() => window.location.href = localStorage.getItem("userRole") === 'buyer' ? "/buyer-notifications" : "/seller-notifications"}
                 className="d-flex flex-column align-items-center mx-2 nav-icon-container"
               >
                 <FaBell className="nav-link-icon" />

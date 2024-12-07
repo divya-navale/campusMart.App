@@ -100,7 +100,6 @@ const ProductDetail = () => {
             <p><strong>Category:</strong> {product.category}</p>
             <p><strong>Negotiable:</strong> {product.negotiable ? 'Yes' : 'No'}</p>
             <p><strong>Product Age:</strong> {product.age} years</p>
-            <p><strong>Contact:</strong> {product.contact}</p>
             <p><strong>Location:</strong> {product.location}</p>
             <p><strong>Available Till:</strong> {product.availableTill}</p>
             <p>{product.description}</p>

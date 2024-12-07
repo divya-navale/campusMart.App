@@ -37,6 +37,15 @@ const Layout = ({ children }) => {
     "/choose-role",
   ].includes(location.pathname);
 
+  // Define routes where Logo should be hidden
+  const shouldHideLogo = [
+    "/request-product",
+    "/profile",
+    "/wishlist",
+    "/notifications",
+    "/seller-dashboard"
+  ].includes(location.pathname);
+
   const isBuyerRoute =
     location.pathname.startsWith("/buyer-dashboard") ||
     location.pathname === "/buyer-profile" ||
@@ -45,16 +54,6 @@ const Layout = ({ children }) => {
   const isSellerRoute =
     location.pathname.startsWith("/seller-dashboard") ||
     location.pathname === "/seller-profile";
-
-  const shouldShowNavbar =
-    !shouldHideNavbar && ( // If not on a hidden page, show the navbar
-      location.pathname === "/notifications" ||
-      location.pathname === "/profile" ||
-      location.pathname === "/wishlist" ||
-      isBuyerRoute ||
-      isSellerRoute ||
-      location.pathname === "/request-product"
-    );
 
   // Logo click handler for redirecting to respective dashboard based on role
   const handleLogoClick = () => {
@@ -74,36 +73,31 @@ const Layout = ({ children }) => {
       {/* Conditionally render the Navbar */}
       {!shouldHideNavbar && <NavbarComponent showSearchBar={!isProductPage} />}
 
-      {/* Buyer Header Layout (including product details page) */}
-      {isBuyerRoute && location.pathname !== "/buyer-profile" && (
+      {/* Show Logo on authentication pages */}
+      {shouldHideNavbar && (
+        <Logo onLogoClick={canClickLogo ? handleLogoClick : null} />
+      )}
+
+      {/* Render BuyerHeader for buyer routes, excluding product detail and profile pages */}
+      {isBuyerRoute && location.pathname !== "/buyer-profile" && !isProductPage && (
         <div className="d-flex">
-          <BuyerHeader showSearchBar={location.pathname !== "/product/:productId"} />
+          <BuyerHeader showSearchBar={true} />
           <div className="flex-grow-1">{children}</div>
         </div>
       )}
 
-      {/* Seller Header Layout */}
-      {isSellerRoute && (
-        <div className="d-flex">
-          <div className="flex-grow-1">{children}</div>
-        </div>
-      )}
-
-      {/* Default Layout without Header */}
-      {!isBuyerRoute && !isSellerRoute && !shouldShowNavbar && (
+      {/* Fallback rendering for all other routes */}
+      {(!isBuyerRoute || location.pathname === "/buyer-profile") && !isProductPage && (
         <>
-          <Logo onLogoClick={canClickLogo ? handleLogoClick : null} />
+          {!shouldHideNavbar && !shouldHideLogo && location.pathname !== "/buyer-profile" && (
+            <Logo onLogoClick={canClickLogo ? handleLogoClick : null} />
+          )}
           <div className="flex-grow-1">{children}</div>
         </>
       )}
 
-      {/* Layout for routes with navbar but no header */}
-      {shouldShowNavbar && !isBuyerRoute && !isSellerRoute && (
-        <div className="flex-grow-1">{children}</div>
-      )}
-
-      {/* Layout for buyer profile without header */}
-      {location.pathname === "/buyer-profile" && (
+      {/* Direct rendering for product details page */}
+      {isProductPage && (
         <div className="flex-grow-1">{children}</div>
       )}
     </>
@@ -125,7 +119,10 @@ function App() {
               element={localStorage.getItem('token') ? <BuyerSellerChoice /> : <Login />}
             />
             <Route path="/verify" element={<Verification />} />
+            
+            {/* Product Details page */}
             <Route path="/product/:productId" element={<ProductDetail />} />
+
             <Route path="/buyer-dashboard" element={<BuyerDashboard />} />
             <Route path="/buyer-profile" element={<BuyerProfile />} />
             <Route path="/request-product" element={<RequestProduct />} />

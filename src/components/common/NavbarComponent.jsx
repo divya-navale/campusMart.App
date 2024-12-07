@@ -23,7 +23,6 @@ const NavbarComponent = () => {
 
   const shouldHideSearchBar = [
     "/notifications",
-    "/profile",
     "/wishlist",
     "/request-product",
   ].includes(location.pathname) || location.pathname.startsWith("/product");
@@ -89,18 +88,6 @@ const NavbarComponent = () => {
           )}
 
           <Nav className="ms-auto align-items-center">
-            <OverlayTrigger
-              placement="bottom"
-              overlay={renderTooltip("Profile")}
-            >
-              <Nav.Link
-                onClick={() => navigate("/profile")}
-                className="d-flex flex-column align-items-center mx-2 nav-icon-container"
-              >
-                <RiUserHeartFill className="nav-link-icon" />
-              </Nav.Link>
-            </OverlayTrigger>
-
             <OverlayTrigger
               placement="bottom"
               overlay={renderTooltip("Notifications")}

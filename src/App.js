@@ -9,8 +9,6 @@ import ForgotPassword from './pages/common/ForgotPassword';
 import BuyerSellerChoice from './pages/common/BuyerSellerChoice';
 import BuyerDashboard from './pages/buyer/BuyerDashboard';
 import SellerDashboard from './pages/seller/SellerDashboard';
-import BuyerProfile from './pages/buyer/BuyerProfile';
-import SellerProfile from './pages/seller/SellerProfile';
 import NavbarComponent from './components/common/NavbarComponent';
 import BuyerHeader from './components/buyer/BuyerHeader';
 import ProductDetail from './pages/buyer/ProductDetails';
@@ -61,8 +59,9 @@ const Layout = ({ children }) => {
 
   // Define routes where Logo should be hidden
   const shouldHideLogo = [
+    "/buyer-notifications",
+    "/seller-notifications",
     "/request-product",
-    "/profile",
     "/wishlist",
     "/notifications",
     "/seller-dashboard",
@@ -70,12 +69,10 @@ const Layout = ({ children }) => {
 
   const isBuyerRoute =
     location.pathname.startsWith("/buyer-dashboard") ||
-    location.pathname === "/buyer-profile" ||
     location.pathname.startsWith("/product/");
 
   const isSellerRoute =
-    location.pathname.startsWith("/seller-dashboard") ||
-    location.pathname === "/seller-profile";
+    location.pathname.startsWith("/seller-dashboard")
 
   // Logo click handler for redirecting to respective dashboard based on role
   const handleLogoClick = () => {
@@ -100,8 +97,8 @@ const Layout = ({ children }) => {
         <Logo onLogoClick={canClickLogo ? handleLogoClick : null} />
       )}
 
-      {/* Render BuyerHeader for buyer routes, excluding product detail and profile pages */}
-      {isBuyerRoute && location.pathname !== "/buyer-profile" && !isProductPage && (
+      {/* Render BuyerHeader for buyer routes, excluding product detail*/}
+      {isBuyerRoute && !isProductPage && (
         <div className="d-flex">
           <BuyerHeader showSearchBar={true} />
           <div className="flex-grow-1">{children}</div>
@@ -109,9 +106,9 @@ const Layout = ({ children }) => {
       )}
 
       {/* Fallback rendering for all other routes */}
-      {(!isBuyerRoute || location.pathname === "/buyer-profile") && !isProductPage && (
+      {(!isBuyerRoute) && !isProductPage && (
         <>
-          {!shouldHideNavbar && !shouldHideLogo && location.pathname !== "/buyer-profile" && (
+          {!shouldHideNavbar && !shouldHideLogo && (
             <Logo onLogoClick={canClickLogo ? handleLogoClick : null} />
           )}
           <div className="flex-grow-1">{children}</div>
@@ -143,14 +140,11 @@ function App() {
             <Route path="/product/:productId" element={<ProductDetail />} />
 
             <Route path="/buyer-dashboard" element={<BuyerDashboard />} />
-            <Route path="/buyer-profile" element={<BuyerProfile />} />
             <Route path="/request-product" element={<RequestProduct />} />
             <Route path="/seller-dashboard" element={<SellerDashboard />} />
-            <Route path="/seller-profile" element={<SellerProfile />} />
             <Route path="/buyer-notifications" element={<BuyerNotifications />} />
             <Route path="/seller-notifications" element={<SellerNotifications />} />
             <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/profile" element={<BuyerProfile />} />
             <Route path="/update-password" element={<UpdatePassword />} />
             <Route path="/session-expired" element={<SessionExpired />} />
           </Routes>

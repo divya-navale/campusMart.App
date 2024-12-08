@@ -349,22 +349,3 @@ export const deleteProductRequest = async (productId) => {
     throw new Error(error.message);
   }
 };
-
-// function to fetch filtered products
-export const fetchFilteredProducts = async (filters) => {
-  try {
-    const cleanedFilters = Object.fromEntries(
-      Object.entries(filters).filter(([_, value]) => value && value.trim() !== '')
-    );
-
-    console.log('Fetching filtered products with filters:', cleanedFilters);
-    const response = await api.get('/api/filtered-products', {
-      params: cleanedFilters,
-    });
-
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching filtered products:', error.response?.data || error);
-    throw error;
-  }
-};

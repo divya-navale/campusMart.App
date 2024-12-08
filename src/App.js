@@ -14,10 +14,9 @@ import BuyerHeader from './components/buyer/BuyerHeader';
 import ProductDetail from './pages/buyer/ProductDetails';
 import RequestProduct from './pages/buyer/RequestProduct';
 import Verification from './pages/common/Verification';
+import Notifications from './pages/common/Notifications';
 import Wishlist from './pages/common/Wishlist';
 import SessionExpired from './pages/common/SessionExpired';
-import BuyerNotifications from './pages/buyer/BuyerNotifications';
-import SellerNotifications from './pages/seller/SellerNotifications';
 
 import './App.css';
 import UpdatePassword from './pages/common/UpdatePassword';
@@ -53,18 +52,16 @@ const Layout = ({ children }) => {
     "/choose-role",
     "/session-expired",
     "/",
-    "/verify",
-    "/update-password"
+    "/verify"
   ].includes(location.pathname);
 
   // Define routes where Logo should be hidden
   const shouldHideLogo = [
-    "/buyer-notifications",
-    "/seller-notifications",
     "/request-product",
+    "/profile",
     "/wishlist",
     "/notifications",
-    "/seller-dashboard",
+    "/seller-dashboard"
   ].includes(location.pathname);
 
   const isBuyerRoute =
@@ -72,7 +69,7 @@ const Layout = ({ children }) => {
     location.pathname.startsWith("/product/");
 
   const isSellerRoute =
-    location.pathname.startsWith("/seller-dashboard")
+    location.pathname.startsWith("/seller-dashboard");
 
   // Logo click handler for redirecting to respective dashboard based on role
   const handleLogoClick = () => {
@@ -97,8 +94,8 @@ const Layout = ({ children }) => {
         <Logo onLogoClick={canClickLogo ? handleLogoClick : null} />
       )}
 
-      {/* Render BuyerHeader for buyer routes, excluding product detail*/}
-      {isBuyerRoute && !isProductPage && (
+      {/* Render BuyerHeader for buyer routes, excluding product detail and profile pages */}
+      {isBuyerRoute && location.pathname !== "/buyer-profile" && !isProductPage && (
         <div className="d-flex">
           <BuyerHeader showSearchBar={true} />
           <div className="flex-grow-1">{children}</div>
@@ -106,9 +103,9 @@ const Layout = ({ children }) => {
       )}
 
       {/* Fallback rendering for all other routes */}
-      {(!isBuyerRoute) && !isProductPage && (
+      {(!isBuyerRoute || location.pathname === "/buyer-profile") && !isProductPage && (
         <>
-          {!shouldHideNavbar && !shouldHideLogo && (
+          {!shouldHideNavbar && !shouldHideLogo && location.pathname !== "/buyer-profile" && (
             <Logo onLogoClick={canClickLogo ? handleLogoClick : null} />
           )}
           <div className="flex-grow-1">{children}</div>
@@ -124,6 +121,22 @@ const Layout = ({ children }) => {
 };
 
 function App() {
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userRole');
+      console.log("Browser is being closed or refreshed!");
+      event.preventDefault();
+      event.returnValue = '';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
   return (
     <Router>
       <div className="app d-flex flex-column min-vh-100">
@@ -140,11 +153,13 @@ function App() {
             <Route path="/product/:productId" element={<ProductDetail />} />
 
             <Route path="/buyer-dashboard" element={<BuyerDashboard />} />
+
             <Route path="/request-product" element={<RequestProduct />} />
             <Route path="/seller-dashboard" element={<SellerDashboard />} />
-            <Route path="/buyer-notifications" element={<BuyerNotifications />} />
-            <Route path="/seller-notifications" element={<SellerNotifications />} />
+
+            <Route path="/notifications" element={<Notifications />} />
             <Route path="/wishlist" element={<Wishlist />} />
+
             <Route path="/update-password" element={<UpdatePassword />} />
             <Route path="/session-expired" element={<SessionExpired />} />
           </Routes>

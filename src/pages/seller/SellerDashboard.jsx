@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Form, Modal } from 'react-bootstrap';
-import { getProductsBySeller, addProduct, updateProduct } from './../../services/api';
+import { getProductsBySeller, addProduct, updateProduct, deleteProduct, markProductAsSold } from './../../services/api';
 import { RESIDENCE_OPTIONS, CATEGORY_OPTIONS, CONDITION_OPTIONS } from '../../constants/options';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const SellerPage = () => {
   const [products, setProducts] = useState([]);
@@ -23,6 +25,7 @@ const SellerPage = () => {
   });
 
   useEffect(() => {
+    emptyForm();
     const fetchProducts = async () => {
       try {
         const fetchedProducts = await getProductsBySeller();
@@ -51,66 +54,95 @@ const SellerPage = () => {
 
   const handleAddOrUpdateProduct = async (e) => {
     e.preventDefault();
-  
     const productData = {
       ...newProduct,
       availableTill: newProduct.availableTill
         ? new Date(newProduct.availableTill).toISOString()
-        : '', // Convert to ISO format before sending to backend
+        : '',
     };
-  
+
+    const file = newProduct.image;
+
     try {
+      let response;
       if (selectedProduct) {
-        const updatedProduct = await updateProduct(selectedProduct._id, productData);
-        setProducts(
-          products.map((product) =>
-            product._id === selectedProduct._id ? updatedProduct : product
+        response = await updateProduct(selectedProduct._id, productData, file);
+        setProducts((prevProducts) =>
+          prevProducts.map((product) =>
+            product._id === selectedProduct._id ? response.product : product
           )
         );
       } else {
-        const addedProduct = await addProduct(productData);
-        setProducts([...products, addedProduct]);
+        response = await addProduct(productData, file);
+        setProducts((prevProducts) => [...prevProducts, response]);
       }
-  
+
+      emptyForm();
       setShowForm(false);
-      setNewProduct({
-        name: '',
-        category: '',
-        price: '',
-        negotiable: false,
-        ageYears: '',
-        ageMonths: '',
-        ageDays: '',
-        description: '',
-        location: '',
-        availableTill: '',
-        condition: '',
-        image: null,
-      });
     } catch (error) {
       console.error('Error adding/updating product:', error);
       alert('Failed to add/update product. Please check the input data.');
     }
   };
   
+
+  const handleDeleteProduct = async (productId) => {
+    try {
+      await deleteProduct(productId);
+
+      setProducts(products.filter(product => product._id !== productId));
+      toast.success('Product deleted successfully!', { position: 'top-right' });
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      alert('Failed to delete product. Please try again later.');
+    }
+  };
+
+  const handleSoldProduct = async (productId) => {
+    try {
+      await markProductAsSold(productId);
+
+      setProducts(products.filter(product => product._id !== productId));
+      toast.success('Congratulations! Product sold!', { position: 'top-right' });
+    } catch (error) {
+      console.error('Error sold product:', error);
+      alert('Failed to sold product. Please try again later.');
+    }
+  }
+
   const handleEditProduct = (product) => {
     setSelectedProduct(product);
-  
-    // Format the availableTill date to 'YYYY-MM-DD' format for the input field
     const formattedAvailableTill = product.availableTill
       ? new Date(product.availableTill).toISOString().split('T')[0]
       : '';
-  
+
     setNewProduct({
       ...product,
       category: product.category || '',
       condition: product.condition || '',
       location: product.location || '',
-      availableTill: formattedAvailableTill, // Use the formatted date
+      availableTill: formattedAvailableTill,
     });
     setShowForm(true);
   };
-  
+
+  const emptyForm = () => {
+    setSelectedProduct("");
+    setNewProduct({
+      name: '',
+      category: '',
+      price: '',
+      negotiable: false,
+      ageYears: '',
+      ageMonths: '',
+      ageDays: '',
+      description: '',
+      location: '',
+      availableTill: '',
+      condition: '',
+      image: null,
+    });
+  }
 
   return (
     <Container className="mt-5">
@@ -122,8 +154,8 @@ const SellerPage = () => {
       </div>
 
       <Row>
-        {products.map((product) => (
-          <Col md={6} className="mb-4" key={product._id}>
+        {products.map((product, index) => (
+          <Col md={6} className="mb-4" key={index}>
             <Card className="h-100 shadow-sm">
               <Card.Body>
                 <Row>
@@ -152,10 +184,12 @@ const SellerPage = () => {
                     <Button variant="primary" className="me-2" onClick={() => handleEditProduct(product)}>
                       Edit
                     </Button>
-                    <Button variant="success" className="me-2">
+                    <Button variant="success" className="me-2" onClick = {() => handleSoldProduct(product._id)}>
                       Sold
                     </Button>
-                    <Button variant="danger">Delete</Button>
+                    <Button variant="danger" onClick={() => handleDeleteProduct(product._id)}>
+                      Delete
+                    </Button>
                   </Col>
                 </Row>
               </Card.Body>
@@ -340,22 +374,59 @@ const SellerPage = () => {
               <Col md={6}>
                 <Form.Group>
                   <Form.Label>Upload Image</Form.Label>
-                  <Form.Control
-                    type="file"
-                    name="image"
-                    onChange={handleFileChange}
-                    required
-                  />
+                  {
+                    selectedProduct && (
+                      <>
+                        <Form.Control
+                          type="file"
+                          name="image"
+                          onChange={handleFileChange}
+                        />
+                      </>
+                    )
+                  }
+                  {
+                    !selectedProduct && (
+                      <>
+                        <Form.Control
+                          type="file"
+                          name="image"
+                          onChange={handleFileChange}
+                          required
+                        />
+                      </>
+                    )
+                  }
                 </Form.Group>
+              </Col>
+              <Col md={6}>
+                {selectedProduct && selectedProduct.imageUrl && (
+                  <Form.Group>
+                    <Form.Label style={{ fontStyle: 'italic' }}>
+                      Click the link to view the existing image
+                    </Form.Label>
+                    <div>
+                      <a
+                        href={selectedProduct.imageUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: '#007bff', textDecoration: 'underline', fontStyle: 'italic' }}
+                      >
+                        View Image
+                      </a>
+                    </div>
+                  </Form.Group>
+                )}
               </Col>
             </Row>
 
-            <Button variant="success" type="submit" block>
+            <Button variant="success" type="submit" className="d-block w-100">
               {selectedProduct ? 'Update Product' : 'Add Product'}
             </Button>
           </Form>
         </Modal.Body>
       </Modal>
+      <ToastContainer />
     </Container>
   );
 };

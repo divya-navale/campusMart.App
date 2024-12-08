@@ -45,6 +45,16 @@ export const fetchProducts = async () => {
   }
 };
 
+export const deleteProduct = async (productId) => {
+  try {
+    const response = await api.delete(`/api/products/${productId}`);
+    return response.data;
+  } catch (error) {
+    console.log('Error deleting product', error);
+    throw new Error(error.message);
+  }
+};
+
 export const fetchProductsBySeller = async (sellerId) => {
   try {
     const response = await api.get(`/api/products/seller/${sellerId}`);
@@ -306,9 +316,40 @@ const parseJwt = (token) => {
 };
 
 
-export const updateProduct = (id, productData) => {
-  
-}
+export const updateProduct = async (productId, updatedData, file) => {
+  try {
+    const sellerId = getUserIdFromToken();
+    const formData = new FormData();
+    
+    formData.append('name', updatedData.name);
+    formData.append('category', updatedData.category);
+    formData.append('price', updatedData.price);
+    formData.append('negotiable', updatedData.negotiable);
+    formData.append('ageYears', updatedData.ageYears);
+    formData.append('ageMonths', updatedData.ageMonths);
+    formData.append('ageDays', updatedData.ageDays);
+    formData.append('description', updatedData.description);
+    formData.append('availableTill', updatedData.availableTill);
+    formData.append('location', updatedData.location);
+    formData.append('contact', updatedData.contact);
+    formData.append('sellerId', sellerId);
+    formData.append('condition', updatedData.condition);
+
+    if (file) {
+      formData.append('image', file);
+    }
+
+    const response = await api.put(`/api/products/${productId}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || error.message);
+  }
+};
 
 export const submitProductRequest = async (productData) => {
   try {
@@ -347,5 +388,14 @@ export const deleteProductRequest = async (productId) => {
     return response.data; 
   } catch (error) {
     throw new Error(error.message);
+  }
+};
+
+export const markProductAsSold = async (productId) => {
+  try {
+    const response = await api.put(`/api/products/${productId}/sold`);
+    console.log('Product marked as sold:', response);
+  } catch (error) {
+    console.error('Failed to mark product as sold:', error.message);
   }
 };

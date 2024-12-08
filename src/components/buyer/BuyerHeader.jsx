@@ -103,7 +103,7 @@ const BuyerHeader = () => {
             </Accordion.Body>
           </Accordion.Item>
 
-          <Accordion.Item eventKey="4">
+          {/* <Accordion.Item eventKey="4">
             <Accordion.Header>
               <Clock size={16} className="me-2" /> Age
             </Accordion.Header>
@@ -114,7 +114,7 @@ const BuyerHeader = () => {
                 onChange={handleCheckboxChange(selectedAge, setSelectedAge)}
               />
             </Accordion.Body>
-          </Accordion.Item>
+          </Accordion.Item> */}
 
           <Accordion.Item eventKey="5">
             <Accordion.Header>

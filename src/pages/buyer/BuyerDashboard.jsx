@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { fetchProducts, addToWishlist, removeFromWishlist, getWishlist, fetchUserDetails, createNotification } from './../../services/api';
-import { Container, Row, Col, Card, Button, Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { useFilters } from '../../components/buyer/Filtercontext'; // Import context
+import { getFilteredProducts, addToWishlist, removeFromWishlist, getWishlist, fetchUserDetails, createNotification } from './../../services/api';  // Import services
+import { Container, Row, Col, Card, Button, Modal } from 'react-bootstrap';
 import { FaHeart, FaCommentDots } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -9,19 +10,46 @@ import '../../styles/buyerDashboard.css';
 
 const BuyerDashboard = () => {
   const navigate = useNavigate();
+  const { selectedResidence, selectedPriceRange, selectedCondition, selectedAge, selectedCategory } = useFilters();
   const [products, setProducts] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [sellerDetails, setSellerDetails] = useState(null);
   const [loadingSeller, setLoadingSeller] = useState(false);
-  const [message, setMessage] = useState('');  // State to hold the message
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
+  // Fetch filtered products when filters change
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchFilteredProducts = async () => {
+      setLoading(true);
       try {
-        const productsData = await fetchProducts();
-        setProducts(productsData);
+        const filters = {
+          residence: selectedResidence.join(','),
+          priceRange: selectedPriceRange.join(','),
+          condition: selectedCondition.join(','),
+          age: selectedAge.join(','),
+          category: selectedCategory.join(','),
+        };
+
+        const fetchedProducts = await getFilteredProducts(filters);
+        setProducts(fetchedProducts);
+      } catch (error) {
+        console.error('Error fetching filtered products:', error);
+        toast.error('Failed to load filtered products. Please try again!');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFilteredProducts();
+  }, [selectedResidence, selectedPriceRange, selectedCondition, selectedAge, selectedCategory]);
+
+  // Fetch wishlist data
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      try {
         const wishlistData = await getWishlist();
         if (wishlistData.message && wishlistData.message === 'No wishlisted products for this user') {
           console.log('No wishlisted products for this user');
@@ -30,14 +58,15 @@ const BuyerDashboard = () => {
           setWishlist(userWishlist);
         }
       } catch (error) {
-        console.error('Error fetching data:', error);
-        toast.error('Failed to load data. Please try again!', { position: 'top-center' });
+        console.error('Error fetching wishlist:', error);
+        toast.error('Failed to load wishlist. Please try again!');
       }
     };
 
-    fetchData();
+    fetchWishlist();
   }, []);
 
+  // Handle adding/removing products from wishlist
   const toggleWishlist = async (productId) => {
     if (wishlist.includes(productId)) {
       try {
@@ -60,16 +89,18 @@ const BuyerDashboard = () => {
     }
   };
 
+  // View product details
   const viewProductDetails = (productId) => {
+    // Navigate to product details page
+    console.log("navigating to product id", productId);
     navigate(`/product/${productId}`);
   };
 
+  // Fetch seller details
   const fetchSellerDetails = async (sellerId) => {
     setLoadingSeller(true);
     try {
       const userData = await fetchUserDetails(sellerId);
-      console.log('Seller Details:', userData);
-
       const sellerInfo = {
         name: userData.name,
         email: userData.email,
@@ -83,19 +114,22 @@ const BuyerDashboard = () => {
     }
   };
 
+  // Show modal to contact seller
   const handleShowModal = async (product) => {
     setSelectedProduct(product);
     await fetchSellerDetails(product.sellerId);
     setShowModal(true);
   };
 
+  // Close modal
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedProduct(null);
     setSellerDetails(null);
-    setMessage(''); // Reset message when modal is closed
+    setMessage('');
   };
 
+  // Send notification to seller
   const handleSendNotification = async () => {
     try {
       if (!message.trim()) {
@@ -113,46 +147,51 @@ const BuyerDashboard = () => {
 
   return (
     <Container className="mt-5">
-      <Row>
-        {products.map((product) => (
-          <Col md={4} sm={6} className="mb-4" key={product._id}>
-            <Card className="h-100 shadow-sm">
-              <Card.Img
-                variant="top"
-                src={product.imageUrl}
-                alt={product.name}
-                className="card-img"
-                onClick={() => viewProductDetails(product._id)}
-              />
-              <Card.Body>
-                <div className="d-flex justify-content-between align-items-center">
-                  <Card.Title className="mb-0">{product.name}</Card.Title>
-                  <div className="d-flex align-items-center">
-                    <FaHeart
-                      size={18}
-                      color={wishlist.includes(product._id) ? '#e63946' : '#adb5bd'}
-                      className="wishlist-icon ms-2"
-                      onClick={() => toggleWishlist(product._id)}
-                      title={wishlist.includes(product._id) ? 'Remove from Wishlist' : 'Add to Wishlist'}
-                      style={{ cursor: 'pointer' }}
-                    />
-                    <FaCommentDots
-                      size={18}
-                      color="#007bff"
-                      className="contact-icon ms-3"
-                      onClick={() => handleShowModal(product)}
-                      title="Contact Seller"
-                      style={{ cursor: 'pointer' }}
-                    />
+      {loading ? (
+        <div>Loading...</div>
+      ) : (
+        <Row>
+          {products.map((product) => (
+            <Col md={4} sm={6} className="mb-4" key={product._id}>
+              <Card className="h-100 shadow-sm">
+                <Card.Img
+                  variant="top"
+                  src={product.imageUrl}
+                  alt={product.name}
+                  className="card-img"
+                  onClick={() => viewProductDetails(product._id)}
+                />
+                <Card.Body>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <Card.Title className="mb-0">{product.name}</Card.Title>
+                    <div className="d-flex align-items-center">
+                      <FaHeart
+                        size={18}
+                        color={wishlist.includes(product._id) ? '#e63946' : '#adb5bd'}
+                        className="wishlist-icon ms-2"
+                        onClick={() => toggleWishlist(product._id)}
+                        title={wishlist.includes(product._id) ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                        style={{ cursor: 'pointer' }}
+                      />
+                      <FaCommentDots
+                        size={18}
+                        color="#007bff"
+                        className="contact-icon ms-3"
+                        onClick={() => handleShowModal(product)}
+                        title="Contact Seller"
+                        style={{ cursor: 'pointer' }}
+                      />
+                    </div>
                   </div>
-                </div>
-                <Card.Text className="mt-2">Price: ${product.price}</Card.Text>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+                  <Card.Text className="mt-2">Price: ${product.price}</Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      )}
 
+      {/* Modal for contacting seller */}
       {selectedProduct && sellerDetails && !loadingSeller && (
         <Modal show={showModal} onHide={handleCloseModal} centered>
           <Modal.Header closeButton>
@@ -177,7 +216,7 @@ const BuyerDashboard = () => {
                       rows="4"
                       placeholder="Enter your message here"
                       value={message}
-                      onChange={(e) => setMessage(e.target.value)} // Capture message input
+                      onChange={(e) => setMessage(e.target.value)}
                     />
                   </td>
                 </tr>
@@ -193,8 +232,6 @@ const BuyerDashboard = () => {
       )}
 
       <ToastContainer />
-
-      {loadingSeller && <div>Loading seller details...</div>}
     </Container>
   );
 };

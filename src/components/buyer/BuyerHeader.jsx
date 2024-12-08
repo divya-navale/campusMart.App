@@ -1,31 +1,30 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Form, Card, Badge, Accordion, Button } from 'react-bootstrap';
 import { Home, DollarSign, Clock, Activity, Grid, Filter } from 'lucide-react';
-import { RESIDENCE_OPTIONS, PRICE_OPTIONS, CONDITION_OPTIONS,  AGE_OPTIONS, CATEGORY_OPTIONS } from '../../constants/options';
-
+import { RESIDENCE_OPTIONS, PRICE_OPTIONS, CONDITION_OPTIONS, AGE_OPTIONS, CATEGORY_OPTIONS } from '../../constants/options';
+import { useFilters } from './Filtercontext'; // Import context
 
 const BuyerHeader = () => {
-  const [selectedResidence, setSelectedResidence] = useState([]);
-  const [selectedPriceRange, setSelectedPriceRange] = useState([]);
-  const [selectedCondition, setSelectedCondition] = useState([]);
-  const [selectedAge, setSelectedAge] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState([]);
+  const {
+    selectedResidence, setSelectedResidence,
+    selectedPriceRange, setSelectedPriceRange,
+    selectedCondition, setSelectedCondition,
+    selectedAge, setSelectedAge,
+    selectedCategory, setSelectedCategory,
+    handleCheckboxChange, handleClearFilters
+  } = useFilters();
 
-  const handleCheckboxChange = (selectedValues, setSelectedValues) => (value) => {
-    const updatedValues = selectedValues.includes(value)
-      ? selectedValues.filter((item) => item !== value)
-      : [...selectedValues, value];
-    setSelectedValues(updatedValues);
+  const getTotalSelectedFilters = () => {
+    return [
+      selectedResidence,
+      selectedPriceRange,
+      selectedCondition,
+      selectedAge,
+      selectedCategory
+    ].reduce((acc, curr) => acc + curr.length, 0);
   };
 
-  const handleClearFilters = () => {
-    setSelectedResidence([]);
-    setSelectedPriceRange([]);
-    setSelectedCondition([]);
-    setSelectedAge([]);
-    setSelectedCategory([]);
-  };
-
+  // CheckboxGroup component to handle each category of checkboxes
   const CheckboxGroup = ({ options, selectedValues, onChange }) => (
     <Form className="px-2">
       {options.map(({ label, value }) => (
@@ -50,22 +49,12 @@ const BuyerHeader = () => {
     </Form>
   );
 
-  const getTotalSelectedFilters = () => {
-    return [
-      selectedResidence,
-      selectedPriceRange,
-      selectedCondition,
-      selectedAge,
-      selectedCategory
-    ].reduce((acc, curr) => acc + curr.length, 0);
-  };
-
   return (
     <Card className="shadow-sm border-0" style={{ width: '280px' }}>
       <Card.Header className="bg-white border-bottom-0 d-flex justify-content-between align-items-center py-3">
         <div className="d-flex align-items-center">
           <Filter className="me-2" size={20} />
-          <h5 className="mb-0" style={{ fontWeight: 'bold', color: '#007bff' }}>Filters</h5> {/* Bold and colorful Filters */}
+          <h5 className="mb-0" style={{ fontWeight: 'bold', color: '#007bff' }}>Filters</h5>
         </div>
         {getTotalSelectedFilters() > 0 && (
           <Badge bg="primary" pill>
@@ -145,6 +134,13 @@ const BuyerHeader = () => {
         <Card.Footer className="bg-white border-top-0 p-3">
           <Button variant="outline-secondary" size="sm" className="w-100" onClick={handleClearFilters}>
             Clear All Filters ({getTotalSelectedFilters()})
+          </Button>
+          <Button
+            variant="primary"
+            size="sm"
+            className="w-100 mt-2"
+          >
+            Filter Products
           </Button>
         </Card.Footer>
       )}

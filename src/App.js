@@ -18,6 +18,7 @@ import Wishlist from './pages/common/Wishlist';
 import SessionExpired from './pages/common/SessionExpired';
 import BuyerNotifications from './pages/buyer/BuyerNotifications';
 import SellerNotifications from './pages/seller/SellerNotifications';
+import {FilterProvider} from './components/buyer/Filtercontext';
 
 import './App.css';
 import UpdatePassword from './pages/common/UpdatePassword';
@@ -126,6 +127,7 @@ const Layout = ({ children }) => {
 function App() {
   return (
     <Router>
+      <FilterProvider>
       <div className="app d-flex flex-column min-vh-100">
         <Layout>
           <Routes>
@@ -151,6 +153,7 @@ function App() {
         </Layout>
         <Footer />
       </div>
+      </FilterProvider>
     </Router>
   );
 }

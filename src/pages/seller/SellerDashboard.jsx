@@ -26,7 +26,7 @@ const SellerPage = () => {
 
   useEffect(() => {
     emptyForm();
-    const fetchProducts = async () => {
+    const fetchSellerProducts = async () => {
       try {
         const fetchedProducts = await getProductsBySeller();
         setProducts(fetchedProducts);
@@ -34,7 +34,7 @@ const SellerPage = () => {
         console.error('Error fetching products:', error);
       }
     };
-    fetchProducts();
+    fetchSellerProducts();
   }, []);
 
   const handleChange = (e) => {

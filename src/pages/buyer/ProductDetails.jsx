@@ -19,12 +19,14 @@ const ProductDetail = () => {
     const getProductDetails = async () => {
       try {
         const productData = await fetchProductById(productId);
+        console.log("yes", productData);
         setProduct(productData);
 
-        // Fetch wishlist and check if this product is in the wishlist
         const wishlistData = await getWishlist(userId);
-        const userWishlist = wishlistData.wishlist.products.map((product) => product._id);
-        setWishlist(userWishlist);
+        if(wishlistData.wishlist){
+          const userWishlist = wishlistData.wishlist.products.map((product) => product._id);
+          setWishlist(userWishlist);  
+        }
       } catch (err) {
         setError('Failed to fetch product details.');
       } finally {

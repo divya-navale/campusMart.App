@@ -38,6 +38,7 @@ export const loginUser = async (email, password) => {
 export const fetchProducts = async () => {
   try {
     const response = await api.get(`/api/products`);
+    console.log("fetch products", response);
     return response.data;
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -52,16 +53,6 @@ export const deleteProduct = async (productId) => {
   } catch (error) {
     console.log('Error deleting product', error);
     throw new Error(error.message);
-  }
-};
-
-export const fetchProductsBySeller = async (sellerId) => {
-  try {
-    const response = await api.get(`/api/products/seller/${sellerId}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching products by seller:', error);
-    throw error;
   }
 };
 
@@ -153,6 +144,7 @@ export const getProductsBySeller = async () => {
   const sellerId = getUserIdFromToken();
   try {
     const response = await api.get(`/api/products/seller/${sellerId}`);
+    console.log("products", response);
     return response.data;
 
   } catch (error) {
@@ -399,3 +391,19 @@ export const markProductAsSold = async (productId) => {
     console.error('Failed to mark product as sold:', error.message);
   }
 };
+
+
+
+
+export const getFilteredProducts = async (filters) => {
+  try {
+    const queryString = new URLSearchParams(filters).toString();  
+    const response = await api.get(`/api/filtered-products?${queryString}`);
+    console.log("filter response", response);
+    return response.data.products; 
+  } catch (error) {
+    console.error("Error fetching filtered products:", error);
+    throw error;
+  }
+};
+

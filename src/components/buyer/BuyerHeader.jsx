@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Card, Badge, Accordion, Button } from 'react-bootstrap';
 import { Home, DollarSign, Clock, Activity, Grid, Filter } from 'lucide-react';
 import { RESIDENCE_OPTIONS, PRICE_OPTIONS, CONDITION_OPTIONS, AGE_OPTIONS, CATEGORY_OPTIONS } from '../../constants/options';
-import { useFilters } from './Filtercontext'; // Import context
+import { useFilters } from './Filtercontext';
 
 const BuyerHeader = () => {
   const {

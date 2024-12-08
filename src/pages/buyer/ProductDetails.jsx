@@ -101,10 +101,11 @@ const ProductDetail = () => {
             <h4 style={{ color: '#6c757d' }}>${product.price}</h4>
             <p><strong>Category:</strong> {product.category}</p>
             <p><strong>Negotiable:</strong> {product.negotiable ? 'Yes' : 'No'}</p>
-            <p><strong>Product Age:</strong> {product.age} years</p>
+            <p><strong>Product Age:</strong> {product.ageYears} years {product.ageMonths} months {product.ageDays} days</p>
+            <p><strong>Condition</strong> {product.condition}</p>
             <p><strong>Location:</strong> {product.location}</p>
             <p><strong>Available Till:</strong> {product.availableTill}</p>
-            <p>{product.description}</p>
+            <p><strong>Description</strong> {product.description}</p>
             <div className="d-flex gap-3 align-items-center mt-4">
               {/* Heart Icon for Wishlist */}
               <div className="d-flex align-items-center">

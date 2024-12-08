@@ -1,10 +1,10 @@
 // constants.js
 
 export const RESIDENCE_OPTIONS = [
-    { label: "Student Housing", value: "student-housing" },
-    { label: "Canterbury Greens", value: "canterbury-greens" },
-    { label: "St. Joe's", value: "st-joes" },
-    { label: "Others", value: "other" }
+    { label: "Student Housing", value: "Student Housing" },
+    { label: "Canterbury Greens", value: "Canterbury Greens" },
+    { label: "St. Joe's", value: "St. Joe's" },
+    { label: "Others", value: "Others" }
 ];
 
 export const PRICE_OPTIONS = [

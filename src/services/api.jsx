@@ -392,12 +392,22 @@ export const markProductAsSold = async (productId) => {
   }
 };
 
-
-
+const formatPriceRange = (priceRange) => {
+  if (priceRange.includes('+')) {
+    console.log(priceRange);
+    return '50+';
+  }
+  return priceRange;
+};
 
 export const getFilteredProducts = async (filters) => {
   try {
-    const queryString = new URLSearchParams(filters).toString();  
+    const formattedPriceRange = formatPriceRange(filters.priceRange);
+    const queryString = new URLSearchParams({
+      ...filters,
+      priceRange: formattedPriceRange,  
+    }).toString();
+    console.log(queryString);
     const response = await api.get(`/api/filtered-products?${queryString}`);
     console.log("filter response", response);
     return response.data.products; 

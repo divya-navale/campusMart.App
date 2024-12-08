@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchProductById, getWishlist, addToWishlist, removeFromWishlist } from './../../services/api';
+import { fetchProductById, getWishlist, addToWishlist, removeFromWishlist, fetchUserDetails, createNotification } from './../../services/api';
 import { Container, Row, Col, Button, Modal } from 'react-bootstrap';
 import { FaHeart } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify'; // Import Toastify
@@ -13,19 +13,25 @@ const ProductDetail = () => {
   const [error, setError] = useState(null);
   const [wishlist, setWishlist] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const userId = '6744d64bb94292764d48fe7f'; // Replace with actual user ID
+  const [message, setMessage] = useState('');  // State for the message input
+  const [sellerDetails, setSellerDetails] = useState(null);  // Seller details for modal
 
   useEffect(() => {
     const getProductDetails = async () => {
       try {
         const productData = await fetchProductById(productId);
-        console.log("yes", productData);
         setProduct(productData);
 
-        const wishlistData = await getWishlist(userId);
-        if(wishlistData.wishlist){
+        const wishlistData = await getWishlist();
+        if (wishlistData.wishlist) {
           const userWishlist = wishlistData.wishlist.products.map((product) => product._id);
-          setWishlist(userWishlist);  
+          setWishlist(userWishlist);
+        }
+
+        // Fetch seller details if available
+        if (productData?.sellerId) {
+          const sellerData = await fetchUserDetails(productData.sellerId);
+          setSellerDetails(sellerData);
         }
       } catch (err) {
         setError('Failed to fetch product details.');
@@ -42,7 +48,7 @@ const ProductDetail = () => {
     if (wishlist.includes(productId)) {
       // Remove from wishlist
       try {
-        await removeFromWishlist(userId, productId); // API call to remove
+        await removeFromWishlist(productId); // API call to remove
         setWishlist(wishlist.filter((id) => id !== productId)); // Update local state
         toast.info('Product removed from wishlist!', { position: "top-right", autoClose: 3000 });
       } catch (error) {
@@ -52,7 +58,7 @@ const ProductDetail = () => {
     } else {
       // Add to wishlist
       try {
-        await addToWishlist(userId, productId); // API call to add
+        await addToWishlist(productId); // API call to add
         setWishlist([...wishlist, productId]); // Update local state
         toast.success('Product added to wishlist!', { position: "top-right", autoClose: 3000 });
       } catch (error) {
@@ -64,6 +70,23 @@ const ProductDetail = () => {
 
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
+
+  // Send notification to the seller
+  const handleSendNotification = async () => {
+    try {
+      if (!message.trim()) {
+        toast.error('Please enter a message before sending!', { position: 'top-center' });
+        return;
+      }
+      // Call API to create a notification
+      await createNotification(sellerDetails._id, product._id, message);
+      toast.success('Notification sent successfully to Seller!', { position: 'top-center' });
+      handleCloseModal();  // Close the modal after sending notification
+    } catch (error) {
+      console.error('Failed to send notification:', error);
+      toast.error('Failed to send notification. Please try again!', { position: 'top-center' });
+    }
+  };
 
   if (loading) {
     return <h2 className="text-center mt-5">Loading...</h2>;
@@ -145,24 +168,30 @@ const ProductDetail = () => {
           <Modal.Title style={{ fontSize: '1.25rem', color: '#495057' }}>Contact Seller</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="text-center">
-            <table style={{ margin: '0 auto', fontSize: '1rem', color: '#495057' }}>
-              <tbody>
-                <tr>
-                  <td style={{ padding: '5px 10px', fontWeight: 'bold', textAlign: 'right' }}>Name:</td>
-                  <td style={{ padding: '5px 10px', textAlign: 'left' }}>{product.contactInfo?.name || 'N/A'}</td>
-                </tr>
-                <tr>
-                  <td style={{ padding: '5px 10px', fontWeight: 'bold', textAlign: 'right' }}>Phone:</td>
-                  <td style={{ padding: '5px 10px', textAlign: 'left' }}>{product.contactInfo?.phone || 'N/A'}</td>
-                </tr>
-                <tr>
-                  <td style={{ padding: '5px 10px', fontWeight: 'bold', textAlign: 'right' }}>Email:</td>
-                  <td style={{ padding: '5px 10px', textAlign: 'left' }}>{product.contactInfo?.email || 'N/A'}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <table style={{ margin: '0 auto', fontSize: '1rem', color: '#495057' }}>
+            <tbody>
+              <tr>
+                <td style={{ padding: '5px 10px', fontWeight: 'bold', textAlign: 'right' }}>Name:</td>
+                <td style={{ padding: '5px 10px', textAlign: 'left' }}>{sellerDetails?.name || 'N/A'}</td>
+              </tr>
+              <tr>
+                <td style={{ padding: '5px 10px', fontWeight: 'bold', textAlign: 'right' }}>Email:</td>
+                <td style={{ padding: '5px 10px', textAlign: 'left' }}>{sellerDetails?.email || 'N/A'}</td>
+              </tr>
+              <tr>
+                <td style={{ padding: '5px 10px', fontWeight: 'bold', textAlign: 'right' }}>Message:</td>
+                <td style={{ padding: '5px 10px', textAlign: 'left' }}>
+                  <textarea
+                    className="form-control"
+                    rows="4"
+                    placeholder="Enter your message here"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
           <div className="d-flex justify-content-end mt-4">
             <Button
               variant="primary"
@@ -171,7 +200,7 @@ const ProductDetail = () => {
                 borderColor: '#6c757d',
                 color: '#f8f9fa',
               }}
-              onClick={handleCloseModal}
+              onClick={handleSendNotification}
             >
               Send Notification
             </Button>

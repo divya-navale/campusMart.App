@@ -38,6 +38,7 @@ export const loginUser = async (email, password) => {
 export const fetchProducts = async () => {
   try {
     const response = await api.get(`/api/products`);
+    console.log("fetch products", response);
     return response.data;
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -45,13 +46,13 @@ export const fetchProducts = async () => {
   }
 };
 
-export const fetchProductsBySeller = async (sellerId) => {
+export const deleteProduct = async (productId) => {
   try {
-    const response = await api.get(`/api/products/seller/${sellerId}`);
+    const response = await api.delete(`/api/products/${productId}`);
     return response.data;
   } catch (error) {
-    console.error('Error fetching products by seller:', error);
-    throw error;
+    console.log('Error deleting product', error);
+    throw new Error(error.message);
   }
 };
 
@@ -143,6 +144,7 @@ export const getProductsBySeller = async () => {
   const sellerId = getUserIdFromToken();
   try {
     const response = await api.get(`/api/products/seller/${sellerId}`);
+    console.log("products", response);
     return response.data;
 
   } catch (error) {
@@ -306,9 +308,40 @@ const parseJwt = (token) => {
 };
 
 
-export const updateProduct = (id, productData) => {
-  
-}
+export const updateProduct = async (productId, updatedData, file) => {
+  try {
+    const sellerId = getUserIdFromToken();
+    const formData = new FormData();
+    
+    formData.append('name', updatedData.name);
+    formData.append('category', updatedData.category);
+    formData.append('price', updatedData.price);
+    formData.append('negotiable', updatedData.negotiable);
+    formData.append('ageYears', updatedData.ageYears);
+    formData.append('ageMonths', updatedData.ageMonths);
+    formData.append('ageDays', updatedData.ageDays);
+    formData.append('description', updatedData.description);
+    formData.append('availableTill', updatedData.availableTill);
+    formData.append('location', updatedData.location);
+    formData.append('contact', updatedData.contact);
+    formData.append('sellerId', sellerId);
+    formData.append('condition', updatedData.condition);
+
+    if (file) {
+      formData.append('image', file);
+    }
+
+    const response = await api.put(`/api/products/${productId}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || error.message);
+  }
+};
 
 export const submitProductRequest = async (productData) => {
   try {
@@ -350,21 +383,36 @@ export const deleteProductRequest = async (productId) => {
   }
 };
 
-// function to fetch filtered products
-export const fetchFilteredProducts = async (filters) => {
+export const markProductAsSold = async (productId) => {
   try {
-    const cleanedFilters = Object.fromEntries(
-      Object.entries(filters).filter(([_, value]) => value && value.trim() !== '')
-    );
-
-    console.log('Fetching filtered products with filters:', cleanedFilters);
-    const response = await api.get('/api/filtered-products', {
-      params: cleanedFilters,
-    });
-
-    return response.data;
+    const response = await api.put(`/api/products/${productId}/sold`);
+    console.log('Product marked as sold:', response);
   } catch (error) {
-    console.error('Error fetching filtered products:', error.response?.data || error);
+    console.error('Failed to mark product as sold:', error.message);
+  }
+};
+
+const formatPriceRange = (priceRange) => {
+  if (priceRange.includes('+')) {
+    console.log(priceRange);
+    return '50+';
+  }
+  return priceRange;
+};
+
+export const getFilteredProducts = async (filters) => {
+  try {
+    const formattedPriceRange = formatPriceRange(filters.priceRange);
+    const queryString = new URLSearchParams({
+      ...filters,
+      priceRange: formattedPriceRange,  
+    }).toString();
+    console.log(queryString);
+    const response = await api.get(`/api/filtered-products?${queryString}`);
+    console.log("filter response", response);
+    return response.data.products; 
+  } catch (error) {
+    console.error("Error fetching filtered products:", error);
     throw error;
   }
 };

@@ -15,6 +15,7 @@ const WishlistPage = () => {
   const [sellerDetails, setSellerDetails] = useState(null);
   const [loadingSeller, setLoadingSeller] = useState(false);
   const [emptyWishlistImage, setEmptyWishlistImage] = useState('');
+  const [message, setMessage] = useState(''); 
 
   useEffect(() => {
     const fetchWishlist = async () => {
@@ -78,14 +79,13 @@ const WishlistPage = () => {
 
   const handleSendNotification = async () => {
     try {
-      await createNotification(selectedProduct.sellerId, selectedProduct._id);
+      await createNotification(selectedProduct.sellerId, selectedProduct._id ,message);
       toast.success('Notification sent successfully to Seller!', { position: 'top-center' });
       handleCloseModal();
     } catch (error) {
       toast.error('Failed to send notification. Please try again!', { position: 'top-center' });
     }
   };
-
   if (loading) {
     return <h2 className="text-center mt-5">Loading...</h2>;
   }
@@ -184,8 +184,30 @@ const WishlistPage = () => {
             <Modal.Title>Contact Seller</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <p><strong>Name:</strong> {sellerDetails.name}</p>
-            <p><strong>Email:</strong> {sellerDetails.email}</p>
+          <table style={{ margin: '0 auto', fontSize: '1rem', color: '#495057' }}>
+            <tbody>
+              <tr>
+                <td style={{ padding: '5px 10px', fontWeight: 'bold', textAlign: 'right' }}>Name:</td>
+                <td style={{ padding: '5px 10px', textAlign: 'left' }}>{sellerDetails?.name || 'N/A'}</td>
+              </tr>
+              <tr>
+                <td style={{ padding: '5px 10px', fontWeight: 'bold', textAlign: 'right' }}>Email:</td>
+                <td style={{ padding: '5px 10px', textAlign: 'left' }}>{sellerDetails?.email || 'N/A'}</td>
+              </tr>
+              <tr>
+                <td style={{ padding: '5px 10px', fontWeight: 'bold', textAlign: 'right' }}>Message:</td>
+                <td style={{ padding: '5px 10px', textAlign: 'left' }}>
+                  <textarea
+                    className="form-control"
+                    rows="4"
+                    placeholder="Enter your message here"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
             <div className="d-flex justify-content-end">
               <Button variant="secondary" onClick={handleSendNotification}>
                 Send Notification

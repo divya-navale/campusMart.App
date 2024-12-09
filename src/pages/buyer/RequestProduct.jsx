@@ -77,7 +77,7 @@ const RequestProduct = () => {
             <Card.Body>
               <h2 className="mb-3 text-center">Your Requested Products</h2>
               {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
-              <ListGroup className="scrollable-list" style={{ maxHeight: '500px', overflowY: 'auto', border: '1px solid #ddd', padding: '10px', borderRadius: '5px' }}>
+              <ListGroup className="scrollable-list" style={{ maxHeight: '500px', overflowY: 'auto', padding: '10px', borderRadius: '5px' }}>
                 {requestedProducts.length === 0 ? (
                   <ListGroup.Item>No requested products yet.</ListGroup.Item>
                 ) : (

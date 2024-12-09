@@ -11,7 +11,6 @@ import {
 } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaHeart, FaBell, FaBoxOpen, FaSignOutAlt } from "react-icons/fa";
-import { RiUserHeartFill } from "react-icons/ri";
 import { BiSolidSelectMultiple } from "react-icons/bi";
 import "./../../styles/style.css";
 import logo from "./../../assets/logo.png";

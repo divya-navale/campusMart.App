@@ -72,9 +72,6 @@ const Layout = ({ children }) => {
     location.pathname.startsWith("/buyer-dashboard") ||
     location.pathname.startsWith("/product/");
 
-  const isSellerRoute =
-    location.pathname.startsWith("/seller-dashboard")
-
   // Logo click handler for redirecting to respective dashboard based on role
   const handleLogoClick = () => {
     const role = localStorage.getItem('userRole');

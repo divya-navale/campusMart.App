@@ -136,7 +136,7 @@ const BuyerDashboard = () => {
         toast.error('Please enter a message before sending!', { position: 'top-center' });
         return;
       }
-      const notificationData = await createNotification(selectedProduct.sellerId, selectedProduct._id, message);
+      await createNotification(selectedProduct.sellerId, selectedProduct._id, message);
       toast.success('Notification sent successfully to Seller!', { position: 'top-center' });
       handleCloseModal();
     } catch (error) {

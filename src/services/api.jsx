@@ -49,6 +49,9 @@ export const fetchProducts = async () => {
 export const deleteProduct = async (productId) => {
   try {
     const response = await api.delete(`/api/products/${productId}`);
+    const nr = await api.delete(`/api/remove-notifications/${productId}`);
+    const wr = await api.delete(`/api/remove-product/${productId}`);
+    console.log('test' + nr,wr);
     return response.data;
   } catch (error) {
     console.log('Error deleting product', error);

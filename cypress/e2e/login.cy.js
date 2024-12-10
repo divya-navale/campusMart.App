@@ -20,7 +20,7 @@ describe('Login Form', () => {
     cy.get('button[type="submit"]').click();
   
     // Wait for the error message to appear and assert the correct message
-    cy.get('.text-danger').should('contain.text', 'User not found');
+    cy.get('.text-danger').should('contain.text', 'Login failed');
   });
   
   

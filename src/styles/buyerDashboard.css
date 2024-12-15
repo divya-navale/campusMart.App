@@ -72,4 +72,47 @@
 .modal-body .notification-btn:hover {
   background-color: #5c646d;
   border-color: #5c646d;
+}
+
+@media (max-width: 768px) {
+  .card img {
+    height: 200px;
+  }
+  .card .card-title {
+    font-size: 1rem;
+  }
+  .card .card-text {
+    font-size: 0.9rem;
+  }
+  .modal-body table {
+    font-size: 0.9rem;
+  }
+  .modal-body table td {
+    padding: 5px;
+  }
+  .modal-body .notification-btn {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+  }
+}
+@media (max-width: 576px) {
+  .card img {
+    height: 150px;
+  }
+  .card .card-title {
+    font-size: 0.9rem;
+  }
+  .card .card-text {
+    font-size: 0.8rem;
+  }
+  .modal-body table {
+    font-size: 0.8rem;
+  }
+  .modal-body table td {
+    padding: 3px;
+  }
+  .modal-body .notification-btn {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+  }
 }/*# sourceMappingURL=buyerDashboard.css.map */

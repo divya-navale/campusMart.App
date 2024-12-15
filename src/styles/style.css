@@ -59,19 +59,3 @@
   outline: none; /* Remove focus outline */
   box-shadow: none; /* Remove any box shadow */
 }/*# sourceMappingURL=style.css.map */
-
-.nav-link-icon {
-  font-size: 1.2rem; /* Increased size slightly */
-  transition: transform 0.3s ease, color 0.3s ease;
-  color: white;
-}
-
-.nav-icon-container:hover .nav-link-icon {
-  transform: scale(1.2); /* Scale up slightly on hover */
-  color: #f8c146; /* Change color on hover */
-}
-
-.nav-icon-container {
-  cursor: pointer; /* Pointer cursor for better UX */
-}
-

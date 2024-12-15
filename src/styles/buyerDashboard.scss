@@ -1,90 +1,153 @@
 .dashboardcontainer {
-    padding: 1.5rem 0;
-    background-color: #f8f9fa;
-  
-    h2 {
-      color: #343a40;
-      margin-bottom: 2rem;
-      text-align: center;
+  padding: 1.5rem 0;
+  background-color: #f8f9fa;
+
+  h2 {
+    color: #343a40;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+}
+
+.card {
+  height: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+
+  img {
+    height: 250px;
+    object-fit: cover;
+    cursor: pointer;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+
+  .card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #495057;
+  }
+
+  .card-text {
+    color: #6c757d;
+    font-size: 1rem;
+  }
+
+  .wishlist-icon {
+    cursor: pointer;
+    margin-right: 5px;
+  }
+
+  .wishlist-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+  }
+
+  .contact-btn {
+    color: #f8f9fa;
+    background-color: #6c757d;
+    border-color: #6c757d;
+
+    &:hover {
+      background-color: #5c646d;
+      border-color: #5c646d;
     }
   }
-  
-  .card {
-    height: 100%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border: 1px solid #dee2e6;
-    border-radius: 10px;
-  
-    img {
-      height: 250px;
-      object-fit: cover;
-      cursor: pointer;
-      border-top-left-radius: 10px;
-      border-top-right-radius: 10px;
-    }
-  
-    .card-title {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #495057;
-    }
-  
-    .card-text {
-      color: #6c757d;
-      font-size: 1rem;
-    }
-  
-    .wishlist-icon {
-      cursor: pointer;
-      margin-right: 5px;
-    }
-  
-    .wishlist-label {
-      font-size: 0.9rem;
-      color: #6c757d;
-    }
-  
-    .contact-btn {
-      color: #f8f9fa;
-      background-color: #6c757d;
-      border-color: #6c757d;
-  
-      &:hover {
-        background-color: #5c646d;
-        border-color: #5c646d;
+}
+
+// Modal styling
+.modal-body {
+  table {
+    margin: 0 auto;
+    font-size: 1rem;
+    color: #495057;
+
+    td {
+      padding: 5px 10px;
+
+      &.label {
+        font-weight: bold;
+        text-align: right;
+      }
+
+      &.value {
+        text-align: left;
       }
     }
   }
-  
+
+  .notification-btn {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: #f8f9fa;
+
+    &:hover {
+      background-color: #5c646d;
+      border-color: #5c646d;
+    }
+  }
+}
+
+// Mobile responsiveness
+@media (max-width: 768px) {
+  .card {
+    img {
+      height: 200px;
+    }
+
+    .card-title {
+      font-size: 1rem;
+    }
+
+    .card-text {
+      font-size: 0.9rem;
+    }
+  }
+
   .modal-body {
     table {
-      margin: 0 auto;
-      font-size: 1rem;
-      color: #495057;
-  
+      font-size: 0.9rem;
+
       td {
-        padding: 5px 10px;
-  
-        &.label {
-          font-weight: bold;
-          text-align: right;
-        }
-  
-        &.value {
-          text-align: left;
-        }
+        padding: 5px;
       }
     }
-  
+
     .notification-btn {
-      background-color: #6c757d;
-      border-color: #6c757d;
-      color: #f8f9fa;
-  
-      &:hover {
-        background-color: #5c646d;
-        border-color: #5c646d;
-      }
+      font-size: 0.9rem;
+      padding: 8px 12px;
     }
   }
-  
+}
+
+@media (max-width: 576px) {
+  .card {
+    img {
+      height: 150px;
+    }
+
+    .card-title {
+      font-size: 0.9rem;
+    }
+
+    .card-text {
+      font-size: 0.8rem;
+    }
+  }
+
+  .modal-body {
+    table {
+      font-size: 0.8rem;
+
+      td {
+        padding: 3px;
+      }
+    }
+
+    .notification-btn {
+      font-size: 0.8rem;
+      padding: 6px 10px;
+    }
+  }
+}

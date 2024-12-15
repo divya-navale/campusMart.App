@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import Logo from './components/common/Logo';
@@ -18,8 +18,8 @@ import Wishlist from './pages/common/Wishlist';
 import SessionExpired from './pages/common/SessionExpired';
 import BuyerNotifications from './pages/buyer/BuyerNotifications';
 import SellerNotifications from './pages/seller/SellerNotifications';
-import {FilterProvider} from './components/buyer/Filtercontext';
-
+import { FilterProvider } from './components/buyer/Filtercontext';
+import './styles/buyerHeader.css';
 import './App.css';
 import UpdatePassword from './pages/common/UpdatePassword';
 
@@ -29,10 +29,10 @@ const Layout = ({ children }) => {
 
   useEffect(() => {
     const userRole = localStorage.getItem('userRole');
-    
+
     if (userRole) {
       if (
-        (userRole === 'buyer' && (location.pathname === '/' || location.pathname === '/login' || location.pathname === '/signup')) 
+        (userRole === 'buyer' && (location.pathname === '/' || location.pathname === '/login' || location.pathname === '/signup'))
       ) {
         navigate('/buyer-dashboard');
       } else if (
@@ -41,7 +41,7 @@ const Layout = ({ children }) => {
         navigate('/seller-dashboard');
       }
     }
-  }, [location.pathname, navigate]);  
+  }, [location.pathname, navigate]);
 
   // Check if the current page is the product detail page
   const isProductPage = location.pathname.startsWith("/product/");
@@ -96,10 +96,11 @@ const Layout = ({ children }) => {
       )}
 
       {/* Render BuyerHeader for buyer routes, excluding product detail*/}
+      {/* Render BuyerHeader for buyer routes, excluding product detail*/}
       {isBuyerRoute && !isProductPage && (
-        <div className="d-flex">
+        <div className="buyer-layout d-flex">
           <BuyerHeader showSearchBar={true} />
-          <div className="flex-grow-1">{children}</div>
+          <div className="content-wrapper flex-grow-1">{children}</div>
         </div>
       )}
 
@@ -125,31 +126,31 @@ function App() {
   return (
     <Router>
       <FilterProvider>
-      <div className="app d-flex flex-column min-vh-100">
-        <Layout>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/choose-role" element={<BuyerSellerChoice />} />
-            <Route path="/" element={ <Login />}/>
-            <Route path="/verify" element={<Verification />} />
-            
-            {/* Product Details page */}
-            <Route path="/product/:productId" element={<ProductDetail />} />
+        <div className="app d-flex flex-column min-vh-100">
+          <Layout>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/choose-role" element={<BuyerSellerChoice />} />
+              <Route path="/" element={<Login />} />
+              <Route path="/verify" element={<Verification />} />
 
-            <Route path="/buyer-dashboard" element={<BuyerDashboard />} />
-            <Route path="/request-product" element={<RequestProduct />} />
-            <Route path="/seller-dashboard" element={<SellerDashboard />} />
-            <Route path="/buyer-notifications" element={<BuyerNotifications />} />
-            <Route path="/seller-notifications" element={<SellerNotifications />} />
-            <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/update-password" element={<UpdatePassword />} />
-            <Route path="/session-expired" element={<SessionExpired />} />
-          </Routes>
-        </Layout>
-        <Footer />
-      </div>
+              {/* Product Details page */}
+              <Route path="/product/:productId" element={<ProductDetail />} />
+
+              <Route path="/buyer-dashboard" element={<BuyerDashboard />} />
+              <Route path="/request-product" element={<RequestProduct />} />
+              <Route path="/seller-dashboard" element={<SellerDashboard />} />
+              <Route path="/buyer-notifications" element={<BuyerNotifications />} />
+              <Route path="/seller-notifications" element={<SellerNotifications />} />
+              <Route path="/wishlist" element={<Wishlist />} />
+              <Route path="/update-password" element={<UpdatePassword />} />
+              <Route path="/session-expired" element={<SessionExpired />} />
+            </Routes>
+          </Layout>
+          <Footer />
+        </div>
       </FilterProvider>
     </Router>
   );

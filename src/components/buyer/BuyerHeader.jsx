@@ -48,7 +48,7 @@ const BuyerHeader = () => {
   );
 
   return (
-    <Card className="shadow-sm border-0" style={{ width: '280px' }}>
+    <Card className="shadow-sm border-0">
       <Card.Header className="bg-white border-bottom-0 d-flex justify-content-between align-items-center py-3">
         <div className="d-flex align-items-center">
           <Filter className="me-2" size={20} />

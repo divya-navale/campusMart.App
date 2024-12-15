@@ -1,0 +1,29 @@
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: none;
+    border-radius: 10px;
+  
+    @media (max-width: 768px) {
+      width: 100%; // Make the card take full width in mobile view
+      margin-bottom: 1rem; // Add spacing between elements
+    }
+  }
+  
+  .buyer-layout {
+    display: flex;
+    flex-wrap: nowrap;
+  
+    .content-wrapper {
+      flex-grow: 1;
+      padding: 1rem;
+  
+      @media (max-width: 768px) {
+        padding: 0.5rem;
+      }
+    }
+  
+    @media (max-width: 768px) {
+      flex-direction: column; // Stack filters and content vertically
+    }
+  }
+  
